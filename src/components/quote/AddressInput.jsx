@@ -1,60 +1,98 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { getAutocompleteSuggestions, geocodeAddress } from '../../api/geoapify'
 import './AddressInput.css'
 
-const DEBOUNCE_MS = 350
+const DEBOUNCE_MS = 300
+const MIN_QUERY_LEN = 2
 
 /**
- * Same behavior as interior tool AddressInput: debounced autocomplete, blur geocode,
- * dropdown absolutely positioned under the input (same-origin /api or VITE_QUOTE_API_BASE).
+ * Autocomplete: debounced fetch with AbortController (avoids race → empty list),
+ * suggestions in a document.body portal (avoids wizard/parent overflow clipping).
  */
 export default function AddressInput({ value, onChange, placeholder = 'Address', inputClassName = 'qtInput' }) {
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [lookupError, setLookupError] = useState(null)
+  const [menuPos, setMenuPos] = useState(null)
   const containerRef = useRef(null)
-  const debounceRef = useRef(null)
+  const listRef = useRef(null)
   const justSelectedRef = useRef(false)
 
+  const syncMenuPosition = () => {
+    const el = containerRef.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    setMenuPos({
+      top: r.bottom + 4,
+      left: r.left,
+      width: Math.max(r.width, 220),
+    })
+  }
+
+  useLayoutEffect(() => {
+    if (!open || suggestions.length === 0) {
+      setMenuPos(null)
+      return
+    }
+    syncMenuPosition()
+    const onScrollOrResize = () => syncMenuPosition()
+    window.addEventListener('scroll', onScrollOrResize, true)
+    window.addEventListener('resize', onScrollOrResize)
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize, true)
+      window.removeEventListener('resize', onScrollOrResize)
+    }
+  }, [open, suggestions])
+
   useEffect(() => {
-    if (!value || value.trim().length < 3) {
+    const q = String(value || '').trim()
+    if (q.length < MIN_QUERY_LEN) {
       setSuggestions([])
       setOpen(false)
       setLoading(false)
       setLookupError(null)
       return
     }
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => {
+
+    const ac = new AbortController()
+    const t = window.setTimeout(() => {
       setLoading(true)
       setLookupError(null)
-      getAutocompleteSuggestions(value)
+      getAutocompleteSuggestions(q, { signal: ac.signal })
         .then((list) => {
           setSuggestions(list || [])
           if (!justSelectedRef.current) {
-            setOpen((list && list.length) > 0)
+            setOpen((list?.length ?? 0) > 0)
           }
           justSelectedRef.current = false
         })
         .catch((err) => {
+          if (err?.name === 'AbortError') return
           setSuggestions([])
           setOpen(false)
           setLookupError(err?.message || 'Address lookup failed')
         })
-        .finally(() => setLoading(false))
+        .finally(() => {
+          if (!ac.signal.aborted) setLoading(false)
+        })
     }, DEBOUNCE_MS)
+
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
+      window.clearTimeout(t)
+      ac.abort()
     }
   }, [value])
 
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false)
+    function handleMouseDown(e) {
+      if (containerRef.current?.contains(e.target)) return
+      if (listRef.current?.contains(e.target)) return
+      setOpen(false)
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
   }, [])
 
   const handleSelect = (s) => {
@@ -79,7 +117,7 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
   }
 
   const handleBlur = () => {
-    if (!value || value.trim().length < 3) return
+    if (!value || String(value).trim().length < 3) return
     geocodeAddress(value.trim())
       .then((coords) => {
         if (coords && coords.lat != null && coords.lon != null) {
@@ -88,6 +126,39 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
       })
       .catch(() => {})
   }
+
+  const dropdown =
+    open &&
+    suggestions.length > 0 &&
+    menuPos &&
+    createPortal(
+      <ul
+        ref={listRef}
+        className="addressInputList addressInputListPortal"
+        role="listbox"
+        style={{
+          position: 'fixed',
+          top: menuPos.top,
+          left: menuPos.left,
+          width: menuPos.width,
+          zIndex: 2147483647,
+        }}
+      >
+        {suggestions.map((s, i) => (
+          <li key={`${s.formatted}-${i}`} role="option">
+            <button
+              type="button"
+              className="addressInputItem"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => handleSelect(s)}
+            >
+              {s.formatted}
+            </button>
+          </li>
+        ))}
+      </ul>,
+      document.body
+    )
 
   return (
     <div className="addressInputWrap" ref={containerRef}>
@@ -98,27 +169,18 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        onFocus={() => value && suggestions.length > 0 && setOpen(true)}
+        onFocus={() => {
+          if (value && suggestions.length > 0) setOpen(true)
+        }}
         autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
+        aria-autocomplete="list"
+        aria-expanded={open && suggestions.length > 0}
       />
       {loading && <span className="addressInputSpinner" aria-hidden />}
       {lookupError && <p className="addressInputError">{lookupError}</p>}
-      {open && suggestions.length > 0 && (
-        <ul className="addressInputList" role="listbox">
-          {suggestions.map((s, i) => (
-            <li key={i} role="option">
-              <button
-                type="button"
-                className="addressInputItem"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => handleSelect(s)}
-              >
-                {s.formatted}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {dropdown}
     </div>
   )
 }

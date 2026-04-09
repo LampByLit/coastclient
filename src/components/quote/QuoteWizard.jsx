@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { TRUCK_SIZES } from '../../data/uhaul'
 import AddressInput from './AddressInput'
-import './QuoteTool.css'
 import './QuoteWizard.css'
 
 const S_DATE = 0

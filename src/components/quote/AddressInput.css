@@ -4,8 +4,25 @@
   position: relative;
 }
 
-.addressInputWrap .qtInput {
+/* Self-contained (wizard no longer imports QuoteTool.css). */
+.qtInput {
+  box-sizing: border-box;
   width: 100%;
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--ink, #1a1a1a);
+}
+
+.qtInput:focus {
+  outline: none;
+  border-color: #009b77;
+  box-shadow: 0 0 0 1px #009b77;
 }
 
 .addressInputSpinner {
@@ -36,20 +53,19 @@
 }
 
 .addressInputList {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 4px);
   margin: 0;
   padding: 4px 0;
   list-style: none;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-  z-index: 99999;
-  max-height: min(240px, 45vh);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  max-height: min(280px, 50vh);
   overflow-y: auto;
+}
+
+.addressInputListPortal {
+  position: fixed;
 }
 
 .addressInputItem {
@@ -58,6 +74,7 @@
   padding: 10px 12px;
   font-size: 0.875rem;
   font-family: inherit;
+  font-weight: 700;
   text-align: left;
   color: rgba(0, 0, 0, 0.87);
   background: none;

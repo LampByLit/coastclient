@@ -121,10 +121,12 @@ async function readFetchError(res) {
   }
 }
 
-export async function getAutocompleteSuggestions(text) {
-  if (!text || text.trim().length < 3) return []
-  const url = `${base()}/geocode/autocomplete?text=${encodeURIComponent(text.trim())}`
-  const res = await fetch(url)
+export async function getAutocompleteSuggestions(text, options = {}) {
+  const { signal } = options
+  const q = String(text || '').trim()
+  if (q.length < 2) return []
+  const url = `${base()}/geocode/autocomplete?text=${encodeURIComponent(q)}`
+  const res = await fetch(url, { signal })
   if (!res.ok) {
     throw new Error(await readFetchError(res))
   }
