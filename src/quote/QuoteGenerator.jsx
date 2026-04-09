@@ -749,6 +749,9 @@ export default function QuoteGenerator() {
         <p className="quoteCardTitle" style={{ marginBottom: 8 }}>
           Labor
         </p>
+        <p className="quoteOptionalHint" style={{ marginBottom: 8 }}>
+          <strong>Labor does not include driving time.</strong>
+        </p>
         <p className="quoteOptionalHint">
           At least {MIN_MOVERS} movers × {MIN_HOURS_PER_MOVER} hours each (${LABOR_RATE_PER_HOUR}/hr). You can add
           movers or increase hours.
