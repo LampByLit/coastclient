@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   TRUCK_SIZES,
   PER_KM_RATE,
@@ -11,7 +11,6 @@ import { getFuelPrices } from './api/apifyFuelClient'
 import AddressInput from './components/AddressInput'
 import RouteMap from './components/RouteMap'
 import { buildBookMovePlainText } from './buildBookMovePlainText'
-import { loadRecaptchaV2Explicit } from './recaptchaClient'
 import './QuoteGenerator.css'
 
 function isValidEmail(s) {
@@ -64,11 +63,7 @@ export default function QuoteGenerator() {
 
   const hasGeoKey = Boolean(import.meta.env.GEOAPIFY_API_KEY)
   const hasApifyToken = Boolean(import.meta.env.APIFY_TOKEN)
-  const formspreeFormId = import.meta.env.VITE_FORMSPREE_FORM_ID
-  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY?.trim()
-
-  const recaptchaContainerRef = useRef(null)
-  const recaptchaWidgetIdRef = useRef(null)
+  const web3formsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY?.trim()
 
   const [bookModalOpen, setBookModalOpen] = useState(false)
   const [bookName, setBookName] = useState('')
@@ -109,47 +104,9 @@ export default function QuoteGenerator() {
     return () => document.removeEventListener('keydown', onKey)
   }, [bookModalOpen, closeBookModal])
 
-  useEffect(() => {
-    const destroyWidget = () => {
-      if (recaptchaContainerRef.current) {
-        recaptchaContainerRef.current.innerHTML = ''
-      }
-      recaptchaWidgetIdRef.current = null
-    }
-
-    if (!bookModalOpen || bookSuccess || !recaptchaSiteKey) {
-      destroyWidget()
-      return undefined
-    }
-
-    let cancelled = false
-    const frame = requestAnimationFrame(() => {
-      loadRecaptchaV2Explicit()
-        .then(() => {
-          if (cancelled || !recaptchaContainerRef.current) return
-          recaptchaContainerRef.current.innerHTML = ''
-          const wid = window.grecaptcha.render(recaptchaContainerRef.current, {
-            sitekey: recaptchaSiteKey,
-          })
-          recaptchaWidgetIdRef.current = wid
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setBookError('Could not load reCAPTCHA. Check your connection or try again.')
-          }
-        })
-    })
-
-    return () => {
-      cancelled = true
-      cancelAnimationFrame(frame)
-      destroyWidget()
-    }
-  }, [bookModalOpen, bookSuccess, recaptchaSiteKey])
-
   const submitBookMove = async () => {
-    if (!formspreeFormId?.trim()) {
-      setBookError('Booking form is not configured. Add VITE_FORMSPREE_FORM_ID to your environment.')
+    if (!web3formsAccessKey) {
+      setBookError('Booking form is not configured. Add VITE_WEB3FORMS_ACCESS_KEY to your environment.')
       return
     }
     const name = bookName.trim()
@@ -192,59 +149,35 @@ export default function QuoteGenerator() {
       }
     )
 
-    let recaptchaToken = ''
-    if (recaptchaSiteKey) {
-      const wid = recaptchaWidgetIdRef.current
-      if (wid == null) {
-        setBookError('reCAPTCHA is still loading. Please wait a moment.')
-        return
-      }
-      recaptchaToken = window.grecaptcha?.getResponse(wid) || ''
-      if (!recaptchaToken) {
-        setBookError('Please complete the “I’m not a robot” check below.')
-        return
-      }
-    }
-
     setBookSending(true)
     setBookError('')
     try {
-      const payload = {
-        _replyto: email,
-        _subject: 'New Move Booking Inquiry',
-        quote: message,
-        _gotcha: bookHoneypot,
-      }
-      if (recaptchaToken) {
-        payload['g-recaptcha-response'] = recaptchaToken
-      }
+      const fd = new FormData()
+      fd.append('access_key', web3formsAccessKey)
+      fd.append('subject', 'New Move Booking Inquiry')
+      fd.append('from_name', 'Coast Team Moving website')
+      fd.append('replyto', email)
+      fd.append('name', name)
+      fd.append('email', email)
+      fd.append('phone', bookPhone.trim() || '—')
+      fd.append('message', message)
 
-      const res = await fetch(`https://formspree.io/f/${formspreeFormId.trim()}`, {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+        body: fd,
       })
       const data = await res.json().catch(() => ({}))
-      if (res.ok) {
+      if (data.success) {
         setBookSuccess(true)
       } else {
-        const errMsg =
-          (typeof data.error === 'string' && data.error) ||
-          (Array.isArray(data.errors) && data.errors[0] && String(data.errors[0].message || '')) ||
-          'Could not send. Please try again or call us.'
-        setBookError(errMsg)
-        if (recaptchaSiteKey && recaptchaWidgetIdRef.current != null && window.grecaptcha?.reset) {
-          window.grecaptcha.reset(recaptchaWidgetIdRef.current)
-        }
+        setBookError(
+          typeof data.message === 'string' && data.message
+            ? data.message
+            : 'Could not send. Please try again or call us.'
+        )
       }
     } catch {
       setBookError('Network error. Please try again.')
-      if (recaptchaSiteKey && recaptchaWidgetIdRef.current != null && window.grecaptcha?.reset) {
-        window.grecaptcha.reset(recaptchaWidgetIdRef.current)
-      }
     } finally {
       setBookSending(false)
     }
@@ -499,11 +432,11 @@ export default function QuoteGenerator() {
           type="button"
           className="quoteBtnBar"
           onClick={openBookModal}
-          disabled={!formspreeFormId?.trim()}
+          disabled={!web3formsAccessKey}
           title={
-            formspreeFormId?.trim()
+            web3formsAccessKey
               ? 'Send this quote to our team'
-              : 'Add VITE_FORMSPREE_FORM_ID to .env to enable booking'
+              : 'Add VITE_WEB3FORMS_ACCESS_KEY to .env to enable booking'
           }
           aria-label="Book your move"
         >
@@ -1082,9 +1015,6 @@ export default function QuoteGenerator() {
                         />
                       </label>
                     </div>
-                    {recaptchaSiteKey && (
-                      <div className="quoteRecaptcha" ref={recaptchaContainerRef} aria-label="reCAPTCHA" />
-                    )}
                     {bookError && <p className="quoteModalError">{bookError}</p>}
                     <div className="quoteModalActions">
                       <button
