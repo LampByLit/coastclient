@@ -1,56 +1,34 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useState, useEffect, useRef } from 'react'
 import { getAutocompleteSuggestions, geocodeAddress } from '../../api/geoapify'
 import './AddressInput.css'
 
 const DEBOUNCE_MS = 350
 
+/**
+ * Same behavior as interior tool AddressInput: debounced autocomplete, blur geocode,
+ * dropdown absolutely positioned under the input (same-origin /api or VITE_QUOTE_API_BASE).
+ */
 export default function AddressInput({ value, onChange, placeholder = 'Address', inputClassName = 'qtInput' }) {
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
-  const [menuPos, setMenuPos] = useState(null)
+  const [lookupError, setLookupError] = useState(null)
   const containerRef = useRef(null)
-  const listRef = useRef(null)
   const debounceRef = useRef(null)
   const justSelectedRef = useRef(false)
-
-  const updateMenuPosition = () => {
-    const el = containerRef.current
-    if (!el) return
-    const r = el.getBoundingClientRect()
-    setMenuPos({
-      top: r.bottom + 4,
-      left: r.left,
-      width: Math.max(r.width, 200),
-    })
-  }
-
-  useLayoutEffect(() => {
-    if (!open || !suggestions.length) {
-      setMenuPos(null)
-      return
-    }
-    updateMenuPosition()
-    const onScrollOrResize = () => updateMenuPosition()
-    window.addEventListener('scroll', onScrollOrResize, true)
-    window.addEventListener('resize', onScrollOrResize)
-    return () => {
-      window.removeEventListener('scroll', onScrollOrResize, true)
-      window.removeEventListener('resize', onScrollOrResize)
-    }
-  }, [open, suggestions])
 
   useEffect(() => {
     if (!value || value.trim().length < 3) {
       setSuggestions([])
       setOpen(false)
       setLoading(false)
+      setLookupError(null)
       return
     }
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       setLoading(true)
+      setLookupError(null)
       getAutocompleteSuggestions(value)
         .then((list) => {
           setSuggestions(list || [])
@@ -59,7 +37,11 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
           }
           justSelectedRef.current = false
         })
-        .catch(() => setSuggestions([]))
+        .catch((err) => {
+          setSuggestions([])
+          setOpen(false)
+          setLookupError(err?.message || 'Address lookup failed')
+        })
         .finally(() => setLoading(false))
     }, DEBOUNCE_MS)
     return () => {
@@ -69,9 +51,7 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
 
   useEffect(() => {
     function handleClickOutside(e) {
-      const inWrap = containerRef.current?.contains(e.target)
-      const inList = listRef.current?.contains(e.target)
-      if (!inWrap && !inList) setOpen(false)
+      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -79,6 +59,7 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
 
   const handleSelect = (s) => {
     justSelectedRef.current = true
+    setLookupError(null)
     onChange(s.formatted, s.lat, s.lon)
     setSuggestions([])
     setOpen(false)
@@ -86,6 +67,7 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
 
   const handleChange = (e) => {
     justSelectedRef.current = false
+    setLookupError(null)
     const v = e.target.value
     if (typeof onChange === 'function') {
       if (v === '') {
@@ -107,39 +89,6 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
       .catch(() => {})
   }
 
-  const listEl =
-    open &&
-    suggestions.length > 0 &&
-    menuPos &&
-    createPortal(
-      <ul
-        ref={listRef}
-        className="addressInputList addressInputListPortal"
-        role="listbox"
-        style={{
-          position: 'fixed',
-          top: menuPos.top,
-          left: menuPos.left,
-          width: menuPos.width,
-          zIndex: 10000,
-        }}
-      >
-        {suggestions.map((s, i) => (
-          <li key={i} role="option">
-            <button
-              type="button"
-              className="addressInputItem"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => handleSelect(s)}
-            >
-              {s.formatted}
-            </button>
-          </li>
-        ))}
-      </ul>,
-      document.body
-    )
-
   return (
     <div className="addressInputWrap" ref={containerRef}>
       <input
@@ -149,15 +98,27 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        onFocus={() => {
-          if (value && suggestions.length > 0) setOpen(true)
-        }}
+        onFocus={() => value && suggestions.length > 0 && setOpen(true)}
         autoComplete="off"
-        aria-autocomplete="list"
-        aria-expanded={open && suggestions.length > 0}
       />
       {loading && <span className="addressInputSpinner" aria-hidden />}
-      {listEl}
+      {lookupError && <p className="addressInputError">{lookupError}</p>}
+      {open && suggestions.length > 0 && (
+        <ul className="addressInputList" role="listbox">
+          {suggestions.map((s, i) => (
+            <li key={i} role="option">
+              <button
+                type="button"
+                className="addressInputItem"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => handleSelect(s)}
+              >
+                {s.formatted}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

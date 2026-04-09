@@ -1,8 +1,9 @@
 import { getQuoteApiBase } from './quoteApiBase'
 
+/** Same path layout as interior tool (`const BASE = '/api'`). */
 const base = () => getQuoteApiBase()
 
-/** Lat/lon from Geoapify GeoJSON feature, JSON hit, or bbox fallback. */
+/** Geoapify GeoJSON features use Point coordinates [lon, lat]. */
 function latLonFromFeature(f) {
   const p = f?.properties ?? f
   let lat = p?.lat != null ? Number(p.lat) : null
@@ -47,7 +48,6 @@ function formattedFromProperties(p) {
   return ''
 }
 
-/** Normalize API payload to an array of GeoJSON-like features. */
 function normalizeGeocodeResults(data) {
   if (!data) return []
   if (Array.isArray(data.features) && data.features.length) return data.features
@@ -65,11 +65,23 @@ function normalizeGeocodeResults(data) {
   return []
 }
 
+async function readFetchError(res) {
+  const text = await res.text().catch(() => '')
+  try {
+    const j = JSON.parse(text)
+    return j.error || j.message || text || res.statusText
+  } catch {
+    return text || res.statusText || `HTTP ${res.status}`
+  }
+}
+
 export async function getAutocompleteSuggestions(text) {
   if (!text || text.trim().length < 3) return []
   const url = `${base()}/geocode/autocomplete?text=${encodeURIComponent(text.trim())}`
   const res = await fetch(url)
-  if (!res.ok) return []
+  if (!res.ok) {
+    throw new Error(await readFetchError(res))
+  }
   const data = await res.json().catch(() => null)
   const features = normalizeGeocodeResults(data)
   return features
