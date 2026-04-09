@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import QuoteGenerator from '../components/quote/QuoteGenerator'
 
 export default function HomePage() {
   return (
@@ -6,34 +6,19 @@ export default function HomePage() {
       <section className="hero" aria-labelledby="hero-heading">
         <div className="heroInner">
           <h1 id="hero-heading" className="heroTitle">
-            Moving made clear.
+            Moving made easy.
           </h1>
           <p className="heroLead">
-            Straightforward quotes and careful crews along the coast.
+            Straightforward quotes and careful crews
+            <br />
+            with the most affordable rates on Vancouver{'\u00a0'}Island.
           </p>
-          <div className="heroActions">
-            <a href="#quote-app" className="btn btnPrimary">
-              Get a quote
-            </a>
-            <Link to="/contact" className="btn btnGhost">
-              Contact us
-            </Link>
-          </div>
         </div>
       </section>
 
-      <section className="section" id="quote-app" aria-labelledby="quote-heading">
-        <div className="sectionInner">
-          <h2 id="quote-heading" className="sectionTitle">
-            Quote generator
-          </h2>
-          <p className="sectionLead">
-            Your moving quote tool will live here — same logic as your interior app, wired to
-            your API and calendar when ready.
-          </p>
-          <div className="quoteAppShell" role="region" aria-label="Quote app placeholder">
-            <p className="quoteAppShellText">Quote app mount point</p>
-          </div>
+      <section className="section" id="quote-app" aria-label="Moving quote">
+        <div className="sectionInner sectionInnerQuote">
+          <QuoteGenerator />
         </div>
       </section>
     </>

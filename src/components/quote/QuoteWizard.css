@@ -1,0 +1,178 @@
+.quoteWizard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem 1.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.quoteWizardProgress {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted, #5c5c5c);
+}
+
+.quoteWizardTitle {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ink, #1a1a1a);
+  line-height: 1.35;
+}
+
+.quoteWizardBody {
+  margin-bottom: 1.25rem;
+}
+
+.quoteWizardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.quoteWizardActionsSpaced {
+  justify-content: space-between;
+}
+
+.quoteWizardBtn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.quoteWizardBtnPrimary {
+  background: var(--ink, #1a1a1a);
+  color: var(--white, #fff);
+  border-color: var(--ink, #1a1a1a);
+}
+
+.quoteWizardBtnPrimary:hover {
+  background: #000;
+}
+
+.quoteWizardBtnGhost {
+  background: transparent;
+  color: var(--ink, #1a1a1a);
+  border-color: rgba(26, 26, 26, 0.25);
+}
+
+.quoteWizardBtnGhost:hover {
+  background: rgba(255, 200, 30, 0.2);
+  border-color: var(--brand, #ffc81e);
+}
+
+.quoteWizardBtnSkip {
+  background: transparent;
+  color: var(--muted, #5c5c5c);
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 700;
+}
+
+.quoteWizardBtnSkip:hover {
+  color: var(--ink, #1a1a1a);
+}
+
+.quoteWizardYesNo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.quoteWizardYesNo .quoteWizardBtn {
+  min-width: 7rem;
+}
+
+.quoteWizardTruckGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.quoteWizardTruckBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.65rem 0.5rem;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background: #f5f5f5;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.quoteWizardTruckBtn:hover {
+  background: #eeeeee;
+}
+
+.quoteWizardTruckBtnActive {
+  border-color: #009b77;
+  background: rgba(0, 155, 119, 0.1);
+  color: #006b52;
+}
+
+.quoteWizardStopList {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+}
+
+.quoteWizardStopRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.quoteWizardStopLabel {
+  flex-shrink: 0;
+  width: 4.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--muted, #5c5c5c);
+}
+
+.quoteWizardHint {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--muted, #5c5c5c);
+}
+
+.quoteWizardRemove {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.55);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.quoteWizardRemove:hover:not(:disabled) {
+  border-color: #009b77;
+  color: #009b77;
+}
+
+.quoteWizardRemove:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

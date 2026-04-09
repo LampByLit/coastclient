@@ -107,7 +107,7 @@ a {
 .hero {
   background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
   color: var(--ink);
-  padding: clamp(2.5rem, 6vw, 4.5rem) 1.25rem;
+  padding: clamp(1.35rem, 3.2vw, 2.25rem) 1.25rem;
 }
 
 .heroInner {
@@ -116,18 +116,17 @@ a {
 }
 
 .heroTitle {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.5rem;
   font-size: clamp(2rem, 5vw, 2.75rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
 .heroLead {
-  margin: 0 0 1.75rem;
+  margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
   opacity: 0.92;
-  max-width: 36ch;
 }
 
 .heroActions {
@@ -182,6 +181,10 @@ a {
 .sectionInner {
   max-width: 48rem;
   margin: 0 auto;
+}
+
+.sectionInnerQuote {
+  max-width: 72rem;
 }
 
 .sectionTitle {

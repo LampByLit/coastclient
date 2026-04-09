@@ -1,0 +1,648 @@
+.quoteToolSurface {
+  min-height: 0;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+}
+
+.appBar {
+  background-color: #009B77;
+  color: #fff;
+  padding: 16px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.appTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.btnPrint {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #009B77;
+  background: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btnPrint:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.appBarActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.btnBook {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+  cursor: not-allowed;
+  font-weight: 500;
+}
+
+.btnBook:disabled {
+  opacity: 0.85;
+}
+
+.no-print {
+  /* used by print media to hide */
+}
+
+.main {
+  flex: 1;
+  padding: 24px;
+}
+
+.mainGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .mainGrid {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 380px) 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .mainLeft {
+    order: 1;
+  }
+
+  .mainCenter {
+    order: 2;
+    position: sticky;
+    top: 24px;
+  }
+
+  .mainRight {
+    order: 3;
+  }
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.mainGrid .card {
+  margin-bottom: 0;
+}
+
+.cardTitle {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.cardHint {
+  margin: 0 0 16px 0;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.stopList {
+  list-style: none;
+  margin: 0 0 12px 0;
+  padding: 0;
+}
+
+.stopRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.stopLabel {
+  flex-shrink: 0;
+  width: 72px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.qtInput {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.qtInput:focus {
+  outline: none;
+  border-color: #009B77;
+  box-shadow: 0 0 0 1px #009B77;
+}
+
+.qtInput.inputDate {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.btnIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.6);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btnIcon:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.04);
+  color: #009B77;
+  border-color: #009B77;
+}
+
+.btnIcon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #009B77;
+  background: transparent;
+  border: 1px solid #009B77;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btnSecondary:hover {
+  background: rgba(6, 148, 148, 0.08);
+}
+
+.truckGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.truckCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 4px;
+  font-family: inherit;
+  background: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.truckCard:hover {
+  background: #eeeeee;
+}
+
+.truckCardActive {
+  border-color: #009B77;
+  border-width: 2px;
+  background: rgba(6, 148, 148, 0.08);
+}
+
+.truckLabel {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.truckCubicFt {
+  font-size: 0.65rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 0;
+}
+
+.truckPrice {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #009B77;
+  margin-top: 1px;
+}
+
+.optionalSection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.optionalSectionTop {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  margin-bottom: 16px;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 8px;
+}
+
+.toggleRow input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #009B77;
+  cursor: pointer;
+}
+
+.toggleLabel {
+  font-weight: 500;
+}
+
+.optionalHint {
+  margin: 0 0 10px 0;
+  font-size: 0.8125rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.fuelPanel {
+  margin-top: 8px;
+}
+
+.fuelSearchLabel {
+  margin: 0 0 10px 0;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.fuelSearchLabel strong {
+  font-weight: 600;
+}
+
+.fuelControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.fuelSelect {
+  padding: 10px 12px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  cursor: pointer;
+}
+
+.fuelSelect:focus {
+  outline: none;
+  border-color: #009B77;
+}
+
+.fuelBtn {
+  flex-shrink: 0;
+}
+
+.fuelList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.fuelItem {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fuelItem:last-child {
+  border-bottom: none;
+}
+
+.fuelStationName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.fuelStationPrice {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #009B77;
+}
+
+.fuelStationAddr {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.laborPanel {
+  margin-top: 8px;
+}
+
+.moverList {
+  list-style: none;
+  margin: 0 0 12px 0;
+  padding: 0;
+}
+
+.moverRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.moverLabel {
+  flex-shrink: 0;
+  width: 56px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.moverHours {
+  width: 64px;
+  text-align: right;
+}
+
+.moverHoursLabel {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.quoteCard {
+  border-left: 4px solid #009B77;
+}
+
+.quoteMeta {
+  margin-bottom: 16px;
+}
+
+.quoteDistance {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.quoteDistanceSub {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 2px;
+}
+
+.quoteDistanceMuted {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.quoteDistanceError {
+  font-size: 0.875rem;
+  color: #b00020;
+}
+
+.quoteBreakdown {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quoteRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0;
+}
+
+.quoteRow dt {
+  margin: 0;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.quoteRow dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.quoteTotal {
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.quoteTotal dt {
+  font-weight: 500;
+}
+
+.quoteTotal dd {
+  font-size: 1.25rem;
+  color: #009B77;
+}
+
+.quoteMapWrap {
+  margin-top: 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  width: 360px;
+  height: 420px;
+  position: relative;
+}
+
+.quoteMap {
+  display: block;
+  width: 360px;
+  height: 420px;
+  object-fit: fill;
+}
+
+.quoteMapOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: 420px;
+  pointer-events: none;
+}
+
+.quoteMapLeaflet {
+  width: 360px;
+  height: 420px;
+}
+
+.quoteMapLeafletContainer {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+}
+
+.quoteMapLeaflet .leaflet-div-icon {
+  background: none;
+  border: none;
+}
+
+@media (max-width: 899px) {
+  .quoteMapWrap {
+    width: 100%;
+    max-width: 360px;
+  }
+}
+
+/* Detailed itemization: visible only when printing */
+.printItemization {
+  display: none;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.printItemizationTitle {
+  margin: 16px 0 6px 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.printItemizationTitle:first-child {
+  margin-top: 0;
+}
+
+.printStops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.printStopRow {
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+}
+
+.printStopLabel {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+  margin-right: 8px;
+}
+
+.printStopAddress {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.printDetail {
+  margin: 0 0 4px 0;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  line-height: 1.4;
+}
+
+.printFuelStation {
+  font-size: 0.8125rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.printLaborList {
+  list-style: none;
+  margin: 0 0 8px 0;
+  padding: 0;
+}
+
+.printLaborRow {
+  font-size: 0.875rem;
+  margin-bottom: 2px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+/* Print: show only quote card with full itemization */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .printItemization {
+    display: block !important;
+  }
+
+  .quoteToolSurface {
+    background: #fff;
+  }
+
+  .appBar {
+    background: #009B77;
+    color: #fff;
+    box-shadow: none;
+    padding: 12px 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .main {
+    padding: 0;
+  }
+
+  .mainGrid {
+    display: block;
+    max-width: none;
+  }
+
+  .mainCenter {
+    position: static;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    break-inside: avoid;
+  }
+
+  .quoteCard {
+    border-left: 4px solid #009B77;
+  }
+
+  .card {
+    box-shadow: none;
+    margin-bottom: 0;
+  }
+
+  .quoteTotal dd {
+    color: #009B77;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
