@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   TRUCK_SIZES,
   PER_KM_RATE,
@@ -11,6 +11,7 @@ import { getFuelPrices } from './api/apifyFuelClient'
 import AddressInput from './components/AddressInput'
 import RouteMap from './components/RouteMap'
 import { buildBookMovePlainText } from './buildBookMovePlainText'
+import { loadRecaptchaV2Explicit } from './recaptchaClient'
 import './QuoteGenerator.css'
 
 function isValidEmail(s) {
@@ -64,6 +65,10 @@ export default function QuoteGenerator() {
   const hasGeoKey = Boolean(import.meta.env.GEOAPIFY_API_KEY)
   const hasApifyToken = Boolean(import.meta.env.APIFY_TOKEN)
   const formspreeFormId = import.meta.env.VITE_FORMSPREE_FORM_ID
+  const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY?.trim()
+
+  const recaptchaContainerRef = useRef(null)
+  const recaptchaWidgetIdRef = useRef(null)
 
   const [bookModalOpen, setBookModalOpen] = useState(false)
   const [bookName, setBookName] = useState('')
@@ -103,6 +108,44 @@ export default function QuoteGenerator() {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [bookModalOpen, closeBookModal])
+
+  useEffect(() => {
+    const destroyWidget = () => {
+      if (recaptchaContainerRef.current) {
+        recaptchaContainerRef.current.innerHTML = ''
+      }
+      recaptchaWidgetIdRef.current = null
+    }
+
+    if (!bookModalOpen || bookSuccess || !recaptchaSiteKey) {
+      destroyWidget()
+      return undefined
+    }
+
+    let cancelled = false
+    const frame = requestAnimationFrame(() => {
+      loadRecaptchaV2Explicit()
+        .then(() => {
+          if (cancelled || !recaptchaContainerRef.current) return
+          recaptchaContainerRef.current.innerHTML = ''
+          const wid = window.grecaptcha.render(recaptchaContainerRef.current, {
+            sitekey: recaptchaSiteKey,
+          })
+          recaptchaWidgetIdRef.current = wid
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setBookError('Could not load reCAPTCHA. Check your connection or try again.')
+          }
+        })
+    })
+
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      destroyWidget()
+    }
+  }, [bookModalOpen, bookSuccess, recaptchaSiteKey])
 
   const submitBookMove = async () => {
     if (!formspreeFormId?.trim()) {
@@ -149,21 +192,40 @@ export default function QuoteGenerator() {
       }
     )
 
+    let recaptchaToken = ''
+    if (recaptchaSiteKey) {
+      const wid = recaptchaWidgetIdRef.current
+      if (wid == null) {
+        setBookError('reCAPTCHA is still loading. Please wait a moment.')
+        return
+      }
+      recaptchaToken = window.grecaptcha?.getResponse(wid) || ''
+      if (!recaptchaToken) {
+        setBookError('Please complete the “I’m not a robot” check below.')
+        return
+      }
+    }
+
     setBookSending(true)
     setBookError('')
     try {
+      const payload = {
+        _replyto: email,
+        _subject: 'New Move Booking Inquiry',
+        quote: message,
+        _gotcha: bookHoneypot,
+      }
+      if (recaptchaToken) {
+        payload['g-recaptcha-response'] = recaptchaToken
+      }
+
       const res = await fetch(`https://formspree.io/f/${formspreeFormId.trim()}`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          _replyto: email,
-          _subject: 'New Move Booking Inquiry',
-          quote: message,
-          _gotcha: bookHoneypot,
-        }),
+        body: JSON.stringify(payload),
       })
       const data = await res.json().catch(() => ({}))
       if (res.ok) {
@@ -174,9 +236,15 @@ export default function QuoteGenerator() {
           (Array.isArray(data.errors) && data.errors[0] && String(data.errors[0].message || '')) ||
           'Could not send. Please try again or call us.'
         setBookError(errMsg)
+        if (recaptchaSiteKey && recaptchaWidgetIdRef.current != null && window.grecaptcha?.reset) {
+          window.grecaptcha.reset(recaptchaWidgetIdRef.current)
+        }
       }
     } catch {
       setBookError('Network error. Please try again.')
+      if (recaptchaSiteKey && recaptchaWidgetIdRef.current != null && window.grecaptcha?.reset) {
+        window.grecaptcha.reset(recaptchaWidgetIdRef.current)
+      }
     } finally {
       setBookSending(false)
     }
@@ -1014,6 +1082,9 @@ export default function QuoteGenerator() {
                         />
                       </label>
                     </div>
+                    {recaptchaSiteKey && (
+                      <div className="quoteRecaptcha" ref={recaptchaContainerRef} aria-label="reCAPTCHA" />
+                    )}
                     {bookError && <p className="quoteModalError">{bookError}</p>}
                     <div className="quoteModalActions">
                       <button
