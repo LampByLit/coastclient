@@ -9,7 +9,7 @@ const PER_KM_MIN = 1.09
 const PER_KM_MAX = 1.29
 export const PER_KM_RATE = (PER_KM_MIN + PER_KM_MAX) / 2
 
-export const LABOR_RATE_PER_HOUR = 50
+export const LABOR_RATE_PER_HOUR = 60
 
 export const MIN_MOVERS = 2
 export const MIN_HOURS_PER_MOVER = 2

@@ -330,3 +330,36 @@ a.contactValue:hover {
     justify-content: center;
   }
 }
+
+@media print {
+  .siteHeader,
+  .siteFooter,
+  .hero {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    print-color-adjust: economy;
+  }
+
+  #root,
+  .layout,
+  .siteMain {
+    min-height: 0 !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  .section,
+  .sectionQuote {
+    padding: 0 !important;
+  }
+
+  .sectionInner,
+  .sectionInnerWide {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}

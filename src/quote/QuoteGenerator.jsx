@@ -298,7 +298,7 @@ export default function QuoteGenerator() {
   }
 
   const toolHeader = (
-    <header className="quoteAppBar">
+    <header className="quoteAppBar no-print">
       <h2 className="quoteAppTitle">Your moving quote</h2>
       <div className="quoteAppBarActions no-print">
         <button type="button" className="quoteBtnBar" onClick={() => window.print()} aria-label="Print quote">
@@ -377,8 +377,8 @@ export default function QuoteGenerator() {
 
   const quotePanel = (
     <section className="quoteCard quoteQuoteCard quoteMainCenter" id="quote-card">
-      <h3 className="quoteCardTitle">Quote</h3>
-      <div className="quoteMeta">
+      <h3 className="quoteCardTitle no-print">Quote</h3>
+      <div className="quoteMeta no-print">
         {!hasGeoKey && (
           <span className="quoteDistanceError">Add GEOAPIFY_API_KEY to show distance and maps.</span>
         )}
@@ -402,13 +402,15 @@ export default function QuoteGenerator() {
       </div>
 
       <div className="printItemization" aria-hidden="true">
+        <p className="printBrand">Coast Team Moving</p>
+        <h1 className="printDocTitle">Moving quote</h1>
         {dateEnabled && moveDate && (
           <>
-            <h4 className="printItemizationTitle">Date</h4>
+            <h2 className="printItemizationTitle">Date</h2>
             <p className="printDetail">{formatPrintDate(moveDate)}</p>
           </>
         )}
-        <h4 className="printItemizationTitle">Route</h4>
+        <h2 className="printItemizationTitle">Route</h2>
         <ul className="printStops">
           {destinations.map((d, i) => (
             <li key={d.id} className="printStopRow">
@@ -419,13 +421,13 @@ export default function QuoteGenerator() {
             </li>
           ))}
         </ul>
-        <h4 className="printItemizationTitle">Truck</h4>
+        <h2 className="printItemizationTitle">Truck</h2>
         <p className="printDetail">
           {requiresTruck
             ? `${truck.label} (${truck.cubicFeet?.toLocaleString()} cu ft) — $${truck.baseRental.toFixed(2)} base rental`
             : 'Customer-provided truck (no rental)'}
         </p>
-        <h4 className="printItemizationTitle">Distance</h4>
+        <h2 className="printItemizationTitle">Distance</h2>
         <p className="printDetail">
           {routeDistanceKm != null
             ? `${Math.round(routeDistanceKm)} km × $${PER_KM_RATE.toFixed(2)}/km = $${distanceFee.toFixed(2)}`
@@ -433,7 +435,7 @@ export default function QuoteGenerator() {
         </p>
         {requiresTruck && (
           <>
-            <h4 className="printItemizationTitle">Fuel</h4>
+            <h2 className="printItemizationTitle">Fuel</h2>
             <p className="printDetail">
               Nearest to: {fuelSearchLabel || '—'}
               {firstFuelStation && (
@@ -457,7 +459,7 @@ export default function QuoteGenerator() {
             </p>
           </>
         )}
-        <h4 className="printItemizationTitle">Labor</h4>
+        <h2 className="printItemizationTitle">Labor</h2>
         <ul className="printLaborList">
           {movers.map((m, i) => {
             const hrs = Number(m.hours) || MIN_HOURS_PER_MOVER
@@ -470,10 +472,38 @@ export default function QuoteGenerator() {
           })}
         </ul>
         <p className="printDetail">Labor total: ${laborCost.toFixed(2)}</p>
-        <h4 className="printItemizationTitle">Summary</h4>
+        <h2 className="printItemizationTitle">Totals</h2>
+        <table className="printTotalsTable">
+          <tbody>
+            {requiresTruck && (
+              <tr>
+                <td>Rental</td>
+                <td>${rental.toFixed(2)}</td>
+              </tr>
+            )}
+            <tr>
+              <td>Distance fee</td>
+              <td>${distanceFee.toFixed(2)}</td>
+            </tr>
+            {requiresTruck && (
+              <tr>
+                <td>Fuel</td>
+                <td>{!hasApifyToken || fuelCost <= 0 ? '—' : `$${fuelCost.toFixed(2)}`}</td>
+              </tr>
+            )}
+            <tr>
+              <td>Labor</td>
+              <td>${laborCost.toFixed(2)}</td>
+            </tr>
+            <tr className="printTotalsGrand">
+              <td>Total</td>
+              <td>${total.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <dl className="quoteBreakdown">
+      <dl className="quoteBreakdown no-print">
         {requiresTruck && (
           <div className="quoteRow">
             <dt>Rental</dt>
@@ -524,7 +554,7 @@ export default function QuoteGenerator() {
           checked={requiresTruck}
           onChange={(e) => setRequiresTruck(e.target.checked)}
         />
-        <span>We provide the truck</span>
+        <span>Truck rental required</span>
       </label>
       {requiresTruck && (
         <>
@@ -767,7 +797,7 @@ export default function QuoteGenerator() {
           <main className="quoteMain">
             {!hasGeoKey && (
               <p className="quoteKeyMissing no-print" style={{ marginBottom: 16 }}>
-                Set <code>GEOAPIFY_API_KEY</code> in <code>.env</code> and restart the dev server.
+                Set GEOAPIFY_API_KEY in .env and restart the dev server.
               </p>
             )}
             <div className="quoteMainGrid">

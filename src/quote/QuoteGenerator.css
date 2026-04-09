@@ -462,21 +462,40 @@
 
 .quoteGen .printItemization {
   display: none;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin: 0;
+  padding: 0;
+  max-width: 40rem;
+  color: #000;
+}
+
+.quoteGen .printBrand {
+  margin: 0 0 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #333;
+}
+
+.quoteGen .printDocTitle {
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  border-bottom: 2px solid #000;
+  line-height: 1.2;
 }
 
 .quoteGen .printItemizationTitle {
-  margin: 16px 0 6px;
-  font-size: 0.75rem;
+  margin: 18px 0 6px;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.08em;
+  color: #333;
 }
 
-.quoteGen .printItemizationTitle:first-child {
+.quoteGen .printItemizationTitle:first-of-type {
   margin-top: 0;
 }
 
@@ -517,6 +536,33 @@
   margin-bottom: 2px;
   color: rgba(0, 0, 0, 0.87);
   font-weight: 700;
+}
+
+.quoteGen .printTotalsTable {
+  width: 100%;
+  max-width: 16rem;
+  border-collapse: collapse;
+  margin-top: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.quoteGen .printTotalsTable td {
+  padding: 6px 0;
+  border-bottom: 1px solid #ccc;
+  vertical-align: baseline;
+}
+
+.quoteGen .printTotalsTable td:last-child {
+  text-align: right;
+  padding-left: 1.5rem;
+}
+
+.quoteGen .printTotalsGrand td {
+  border-bottom: none;
+  border-top: 2px solid #000;
+  padding-top: 10px;
+  font-size: 1.05rem;
 }
 
 /* Wizard */
@@ -667,6 +713,11 @@
 }
 
 @media print {
+  @page {
+    margin: 12mm 14mm;
+    size: auto;
+  }
+
   .quoteGen .no-print {
     display: none !important;
   }
@@ -678,11 +729,7 @@
   .quoteGen .quoteApp {
     border: none;
     box-shadow: none;
-  }
-
-  .quoteGen .quoteAppBar {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    background: #fff;
   }
 
   .quoteGen .quoteMain {
@@ -696,10 +743,19 @@
 
   .quoteGen .quoteMainCenter {
     position: static;
-    break-inside: avoid;
+    width: 100%;
+    max-width: none;
   }
 
   .quoteGen .quoteCard {
     box-shadow: none;
+    border: none;
+    padding: 0;
+    background: #fff;
+    break-inside: avoid;
+  }
+
+  .quoteGen .quoteQuoteCard {
+    border-left: none;
   }
 }
