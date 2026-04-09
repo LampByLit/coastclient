@@ -159,11 +159,9 @@ export default function QuoteGenerator() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name,
-          email,
-          phone: bookPhone.trim() || '—',
-          message,
-          _subject: 'Book Your Move — Coast Team Moving quote',
+          _replyto: email,
+          _subject: 'New Move Booking Inquiry',
+          quote: message,
           _gotcha: bookHoneypot,
         }),
       })
@@ -952,7 +950,7 @@ export default function QuoteGenerator() {
                       Request sent
                     </h3>
                     <p className="quoteModalText">
-                      Thanks — we emailed your quote and contact details to our team. We&apos;ll be in touch soon.
+                      Thanks! Somebody from our team will be in touch soon.
                     </p>
                     <div className="quoteModalActions">
                       <button type="button" className="quoteWizardBtnPrimary" onClick={closeBookModal}>
