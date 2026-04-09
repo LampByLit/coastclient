@@ -1,4 +1,4 @@
-import QuoteGenerator from '../components/quote/QuoteGenerator'
+import QuoteGenerator from '../quote/QuoteGenerator'
 
 export default function HomePage() {
   return (
@@ -16,8 +16,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section" id="quote-app" aria-label="Moving quote">
-        <div className="sectionInner sectionInnerQuote">
+      <section className="section sectionQuote" id="quote-app" aria-label="Get a quote">
+        <div className="sectionInner sectionInnerWide">
           <QuoteGenerator />
         </div>
       </section>

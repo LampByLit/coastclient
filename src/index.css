@@ -183,14 +183,8 @@ a {
   margin: 0 auto;
 }
 
-.sectionInnerQuote {
+.sectionInnerWide {
   max-width: 72rem;
-}
-
-/* Let address dropdown escape section clipping (match unobstructed interior tool layout). */
-#quote-app,
-#quote-app .sectionInnerQuote {
-  overflow: visible;
 }
 
 .sectionTitle {

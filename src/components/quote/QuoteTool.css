@@ -38,29 +38,6 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
-.appBarActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.btnBook {
-  padding: 8px 16px;
-  font-size: 0.875rem;
-  font-family: inherit;
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 4px;
-  cursor: not-allowed;
-  font-weight: 500;
-}
-
-.btnBook:disabled {
-  opacity: 0.85;
-}
-
 .no-print {
   /* used by print media to hide */
 }
@@ -160,11 +137,6 @@
   outline: none;
   border-color: #009B77;
   box-shadow: 0 0 0 1px #009B77;
-}
-
-.qtInput.inputDate {
-  flex: 0 1 auto;
-  min-width: 0;
 }
 
 .btnIcon {
@@ -517,13 +489,6 @@
 .quoteMapLeaflet .leaflet-div-icon {
   background: none;
   border: none;
-}
-
-@media (max-width: 899px) {
-  .quoteMapWrap {
-    width: 100%;
-    max-width: 360px;
-  }
 }
 
 /* Detailed itemization: visible only when printing */

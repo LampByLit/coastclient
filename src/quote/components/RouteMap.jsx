@@ -24,14 +24,16 @@ function FitBounds({ waypoints, routeCoordinates }) {
 }
 
 function createMarkerIcon(label, isEnd) {
-  const color = isEnd ? '#009B77' : '#666'
+  const accent = '#ffc81e'
+  const muted = '#5c5c5c'
+  const color = isEnd ? accent : muted
   return L.divIcon({
     className: 'quoteMapLeafletIcon',
     html: `<span style="
       display:inline-flex;align-items:center;justify-content:center;
       width:20px;height:20px;border-radius:50%;
-      background:${color};color:#fff;border:2px solid #fff;
-      font-size:10px;font-weight:600;line-height:1;
+      background:${color};color:#1a1a1a;border:2px solid #fff;
+      font-size:10px;font-weight:700;line-height:1;
     ">${label}</span>`,
     iconSize: [20, 20],
     iconAnchor: [10, 10],
@@ -49,7 +51,7 @@ export default function RouteMap({ waypoints = [], routeCoordinates = null }) {
   const center = waypoints.length ? [waypoints[0][0], waypoints[0][1]] : [49.25, -124.8]
 
   return (
-    <div className="quoteMapWrap quoteMapLeaflet">
+    <div className="quoteMapLeaflet">
       <MapContainer
         center={center}
         zoom={8}
@@ -66,7 +68,7 @@ export default function RouteMap({ waypoints = [], routeCoordinates = null }) {
           <Polyline
             positions={routePositions}
             pathOptions={{
-              color: '#009B77',
+              color: '#e0b010',
               weight: 4,
               opacity: 0.95,
             }}

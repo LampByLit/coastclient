@@ -1,0 +1,705 @@
+.quoteGen {
+  --quote-accent: #ffc81e;
+  --quote-accent-dark: #e0b010;
+  --quote-ink: #1a1a1a;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+
+.quoteGen .quoteApp {
+  min-height: 0;
+  background: var(--bg, #fafafa);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(26, 26, 26, 0.08);
+}
+
+.quoteGen .quoteAppBar {
+  background: linear-gradient(135deg, var(--quote-accent) 0%, var(--quote-accent-dark) 100%);
+  color: var(--quote-ink);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quoteGen .quoteAppTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.quoteGen .quoteAppBarActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quoteGen .quoteBtnBar {
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--quote-ink);
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid var(--quote-ink);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quoteGen .quoteBtnBar:hover:not(:disabled) {
+  background: #fff;
+}
+
+.quoteGen .quoteBtnBar:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.quoteGen .quoteMain {
+  padding: 20px;
+}
+
+.quoteGen .quoteMainGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .quoteGen .quoteMainGrid {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 380px) 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .quoteGen .quoteMainLeft {
+    order: 1;
+  }
+
+  .quoteGen .quoteMainCenter {
+    order: 2;
+    position: sticky;
+    top: calc(var(--header-h, 4.25rem) + 12px);
+  }
+
+  .quoteGen .quoteMainRight {
+    order: 3;
+  }
+}
+
+.quoteGen .quoteCard {
+  background: #fff;
+  border-radius: 8px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.quoteGen .quoteMainGrid .quoteCard {
+  margin-bottom: 0;
+}
+
+.quoteGen .quoteCardTitle {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.quoteGen .quoteCardHint {
+  margin: 0 0 14px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 700;
+}
+
+.quoteGen .quoteStopList {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.quoteGen .quoteStopRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.quoteGen .quoteStopLabel {
+  flex-shrink: 0;
+  width: 72px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 700;
+}
+
+.quoteGen .quoteInput {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.quoteGen .quoteInput:focus {
+  outline: none;
+  border-color: var(--quote-accent-dark);
+  box-shadow: 0 0 0 2px rgba(255, 200, 30, 0.45);
+}
+
+.quoteGen .quoteBtnIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.55);
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.quoteGen .quoteBtnIcon:hover:not(:disabled) {
+  background: rgba(255, 200, 30, 0.2);
+  color: var(--quote-ink);
+  border-color: var(--quote-accent-dark);
+}
+
+.quoteGen .quoteBtnIcon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quoteGen .quoteBtnSecondary {
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--quote-ink);
+  background: transparent;
+  border: 2px solid var(--quote-accent-dark);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quoteGen .quoteBtnSecondary:hover {
+  background: rgba(255, 200, 30, 0.25);
+}
+
+.quoteGen .quoteTruckGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.quoteGen .quoteTruckCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 6px;
+  font-family: inherit;
+  font-weight: 700;
+  background: #f5f5f5;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.quoteGen .quoteTruckCard:hover {
+  background: #eee;
+}
+
+.quoteGen .quoteTruckCardActive {
+  border-color: var(--quote-accent-dark);
+  background: rgba(255, 200, 30, 0.35);
+}
+
+.quoteGen .quoteTruckLabel {
+  font-size: 0.8125rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.quoteGen .quoteTruckCubicFt {
+  font-size: 0.65rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 0;
+  font-weight: 700;
+}
+
+.quoteGen .quoteTruckPrice {
+  font-size: 0.8125rem;
+  color: var(--quote-ink);
+  margin-top: 2px;
+}
+
+.quoteGen .quoteOptionalSection {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.quoteGen .quoteOptionalSectionTop {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  margin-bottom: 14px;
+}
+
+.quoteGen .quoteToggleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.quoteGen .quoteToggleRow input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--quote-accent-dark);
+  cursor: pointer;
+}
+
+.quoteGen .quoteOptionalHint {
+  margin: 0 0 10px;
+  font-size: 0.8125rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 700;
+}
+
+.quoteGen .quoteFuelSearchLabel {
+  margin: 0 0 10px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 700;
+}
+
+.quoteGen .quoteFuelList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.quoteGen .quoteFuelItem {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quoteGen .quoteFuelItem:last-child {
+  border-bottom: none;
+}
+
+.quoteGen .quoteFuelStationName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.quoteGen .quoteFuelStationPrice {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--quote-ink);
+}
+
+.quoteGen .quoteFuelStationAddr {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 700;
+}
+
+.quoteGen .quoteMoverList {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.quoteGen .quoteMoverRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.quoteGen .quoteMoverLabel {
+  flex-shrink: 0;
+  width: 64px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 700;
+}
+
+.quoteGen .quoteMoverHours {
+  width: 72px;
+  text-align: right;
+}
+
+.quoteGen .quoteMoverHoursLabel {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 700;
+}
+
+.quoteGen .quoteQuoteCard {
+  border-left: 4px solid var(--quote-accent-dark);
+}
+
+.quoteGen .quoteMeta {
+  margin-bottom: 14px;
+}
+
+.quoteGen .quoteDistance {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 700;
+}
+
+.quoteGen .quoteDistanceSub {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.45);
+  margin-top: 2px;
+  font-weight: 700;
+}
+
+.quoteGen .quoteDistanceMuted {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.38);
+  font-weight: 700;
+}
+
+.quoteGen .quoteDistanceError {
+  font-size: 0.875rem;
+  color: #b00020;
+  font-weight: 700;
+}
+
+.quoteGen .quoteBreakdown {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quoteGen .quoteRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0;
+}
+
+.quoteGen .quoteRow dt {
+  margin: 0;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.quoteGen .quoteRow dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.quoteGen .quoteTotal {
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.quoteGen .quoteTotal dd {
+  font-size: 1.25rem;
+  color: var(--quote-ink);
+}
+
+.quoteGen .quoteMapWrap {
+  margin-top: 14px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 360px;
+  height: 420px;
+  position: relative;
+}
+
+.quoteGen .quoteMapLeaflet {
+  width: 100%;
+  height: 100%;
+}
+
+.quoteGen .quoteMapLeafletContainer {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+}
+
+.quoteGen .quoteMapLeaflet .leaflet-div-icon {
+  background: none;
+  border: none;
+}
+
+.quoteGen .no-print {
+  /* print hide */
+}
+
+.quoteGen .printItemization {
+  display: none;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.quoteGen .printItemizationTitle {
+  margin: 16px 0 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.quoteGen .printItemizationTitle:first-child {
+  margin-top: 0;
+}
+
+.quoteGen .printStops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.quoteGen .printStopRow {
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.quoteGen .printStopLabel {
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.7);
+  margin-right: 8px;
+}
+
+.quoteGen .printDetail {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.quoteGen .printLaborList {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+}
+
+.quoteGen .printLaborRow {
+  font-size: 0.875rem;
+  margin-bottom: 2px;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 700;
+}
+
+/* Wizard */
+.quoteWizard {
+  background: #fff;
+  border-radius: 12px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 2px solid rgba(26, 26, 26, 0.08);
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.quoteWizardTitle {
+  margin: 0 0 0.35rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--quote-ink);
+}
+
+.quoteWizardStep {
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.quoteWizardQuestion {
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--quote-ink);
+}
+
+.quoteWizardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 1.25rem;
+}
+
+.quoteWizardBtnPrimary {
+  padding: 0.65rem 1.2rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 2px solid var(--quote-ink);
+  background: var(--quote-ink);
+  color: #fff;
+  cursor: pointer;
+}
+
+.quoteWizardBtnPrimary:hover {
+  background: #000;
+}
+
+.quoteWizardBtnGhost {
+  padding: 0.65rem 1.2rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 2px solid rgba(26, 26, 26, 0.25);
+  background: rgba(255, 200, 30, 0.2);
+  color: var(--quote-ink);
+  cursor: pointer;
+}
+
+.quoteWizardBtnGhost:hover {
+  background: rgba(255, 200, 30, 0.4);
+}
+
+.quoteWizardBtnChoice {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 2px solid var(--quote-accent-dark);
+  background: #fff;
+  color: var(--quote-ink);
+  cursor: pointer;
+}
+
+.quoteWizardBtnChoice:hover {
+  background: rgba(255, 200, 30, 0.35);
+}
+
+.quoteWizardBtnChoiceActive {
+  background: var(--quote-accent);
+  border-color: var(--quote-ink);
+}
+
+.quoteWizardDate {
+  padding: 10px 12px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+.quoteWizardDate:focus {
+  outline: none;
+  border-color: var(--quote-accent-dark);
+}
+
+.quoteWizardTruckGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.quoteWizardLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--quote-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.quoteWizardLink:hover {
+  color: var(--quote-accent-dark);
+}
+
+.quoteWizardBack {
+  margin-right: auto;
+}
+
+.quoteKeyMissing {
+  margin: 0 0 1rem;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(176, 0, 32, 0.08);
+  color: #8b0000;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+@media print {
+  .quoteGen .no-print {
+    display: none !important;
+  }
+
+  .quoteGen .printItemization {
+    display: block !important;
+  }
+
+  .quoteGen .quoteApp {
+    border: none;
+    box-shadow: none;
+  }
+
+  .quoteGen .quoteAppBar {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .quoteGen .quoteMain {
+    padding: 0;
+  }
+
+  .quoteGen .quoteMainGrid {
+    display: block;
+    max-width: none;
+  }
+
+  .quoteGen .quoteMainCenter {
+    position: static;
+    break-inside: avoid;
+  }
+
+  .quoteGen .quoteCard {
+    box-shadow: none;
+  }
+}

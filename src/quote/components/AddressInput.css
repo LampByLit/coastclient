@@ -1,0 +1,62 @@
+.quoteAddressInputWrap {
+  flex: 1;
+  position: relative;
+}
+
+.quoteAddressInputWrap .quoteInput {
+  width: 100%;
+}
+
+.quoteAddressInputSpinner {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: var(--quote-accent, #ffc81e);
+  border-radius: 50%;
+  animation: quoteAddressInputSpin 0.6s linear infinite;
+}
+
+@keyframes quoteAddressInputSpin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.quoteAddressInputList {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.quoteAddressInputItem {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.87);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.quoteAddressInputItem:hover {
+  background: rgba(255, 200, 30, 0.2);
+  color: var(--ink, #1a1a1a);
+}
