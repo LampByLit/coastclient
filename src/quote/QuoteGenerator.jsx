@@ -152,28 +152,33 @@ export default function QuoteGenerator() {
     setBookSending(true)
     setBookError('')
     try {
-      const fd = new FormData()
-      fd.append('access_key', web3formsAccessKey)
-      fd.append('subject', 'New Move Booking Inquiry')
-      fd.append('from_name', 'Coast Team Moving website')
-      fd.append('replyto', email)
-      fd.append('name', name)
-      fd.append('email', email)
-      fd.append('phone', bookPhone.trim() || '—')
-      fd.append('message', message)
-
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        body: fd,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: web3formsAccessKey,
+          subject: 'New Move Booking Inquiry',
+          from_name: 'Coast Team Moving website',
+          replyto: email,
+          name,
+          email,
+          phone: bookPhone.trim() || '—',
+          message,
+        }),
       })
       const data = await res.json().catch(() => ({}))
-      if (data.success) {
+      const apiMessage =
+        (typeof data.body?.message === 'string' && data.body.message) ||
+        (typeof data.message === 'string' && data.message) ||
+        ''
+      if (res.ok && data.success) {
         setBookSuccess(true)
       } else {
         setBookError(
-          typeof data.message === 'string' && data.message
-            ? data.message
-            : 'Could not send. Please try again or call us.'
+          apiMessage || `Could not send (${res.status}). Please try again or call us.`
         )
       }
     } catch {
