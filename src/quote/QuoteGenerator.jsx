@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   TRUCK_SIZES,
   PER_KM_RATE,
@@ -10,7 +10,12 @@ import { getRouteDistanceKm, reverseGeocodeToPlace } from './api/geoapifyClient'
 import { getFuelPrices } from './api/apifyFuelClient'
 import AddressInput from './components/AddressInput'
 import RouteMap from './components/RouteMap'
+import { buildBookMovePlainText } from './buildBookMovePlainText'
 import './QuoteGenerator.css'
+
+function isValidEmail(s) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s).trim())
+}
 
 const WIZARD_STEPS = { date: 1, truck: 2, truckSize: 3, addresses: 4 }
 const TOTAL_STEPS = 4
@@ -58,6 +63,126 @@ export default function QuoteGenerator() {
 
   const hasGeoKey = Boolean(import.meta.env.GEOAPIFY_API_KEY)
   const hasApifyToken = Boolean(import.meta.env.APIFY_TOKEN)
+  const formspreeFormId = import.meta.env.VITE_FORMSPREE_FORM_ID
+
+  const [bookModalOpen, setBookModalOpen] = useState(false)
+  const [bookName, setBookName] = useState('')
+  const [bookEmail, setBookEmail] = useState('')
+  const [bookPhone, setBookPhone] = useState('')
+  const [bookHoneypot, setBookHoneypot] = useState('')
+  const [bookSending, setBookSending] = useState(false)
+  const [bookSuccess, setBookSuccess] = useState(false)
+  const [bookError, setBookError] = useState('')
+
+  const openBookModal = () => {
+    setBookError('')
+    setBookSuccess(false)
+    setBookModalOpen(true)
+  }
+
+  const closeBookModal = useCallback(() => {
+    setBookModalOpen(false)
+    setBookSending(false)
+    setBookSuccess((wasSuccess) => {
+      if (wasSuccess) {
+        setBookName('')
+        setBookEmail('')
+        setBookPhone('')
+        setBookHoneypot('')
+      }
+      return false
+    })
+    setBookError('')
+  }, [])
+
+  useEffect(() => {
+    if (!bookModalOpen) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') closeBookModal()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [bookModalOpen, closeBookModal])
+
+  const submitBookMove = async () => {
+    if (!formspreeFormId?.trim()) {
+      setBookError('Booking form is not configured. Add VITE_FORMSPREE_FORM_ID to your environment.')
+      return
+    }
+    const name = bookName.trim()
+    const email = bookEmail.trim()
+    if (!name) {
+      setBookError('Please enter your name.')
+      return
+    }
+    if (!email || !isValidEmail(email)) {
+      setBookError('Please enter a valid email address.')
+      return
+    }
+    if (bookHoneypot.trim()) {
+      return
+    }
+
+    const message = buildBookMovePlainText(
+      { name, email, phone: bookPhone },
+      {
+        dateLine: dateEnabled && moveDate ? formatPrintDate(moveDate) : '',
+        destinations,
+        requiresTruck,
+        truck,
+        routeDistanceKm,
+        distanceFee,
+        rental,
+        fuelSearchLabel,
+        firstFuelStation: fuelStations[0] ?? null,
+        formattedFuelPriceText: formattedFuelPrice?.text ?? '',
+        distanceKm,
+        fuelLperKm: truck.fuelLperKm ?? 0.28,
+        fuelCost,
+        movers,
+        laborCost,
+        total,
+        hasApifyToken,
+        MIN_HOURS_PER_MOVER,
+        LABOR_RATE_PER_HOUR,
+        PER_KM_RATE,
+      }
+    )
+
+    setBookSending(true)
+    setBookError('')
+    try {
+      const res = await fetch(`https://formspree.io/f/${formspreeFormId.trim()}`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone: bookPhone.trim() || '—',
+          message,
+          _subject: 'Book Your Move — Coast Team Moving quote',
+          _gotcha: bookHoneypot,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok) {
+        setBookSuccess(true)
+      } else {
+        const errMsg =
+          (typeof data.error === 'string' && data.error) ||
+          (Array.isArray(data.errors) && data.errors[0] && String(data.errors[0].message || '')) ||
+          'Could not send. Please try again or call us.'
+        setBookError(errMsg)
+      }
+    } catch {
+      setBookError('Network error. Please try again.')
+    } finally {
+      setBookSending(false)
+    }
+  }
 
   const waypoints = destinations
     .filter((d) => d.lat != null && d.lon != null)
@@ -307,11 +432,16 @@ export default function QuoteGenerator() {
         <button
           type="button"
           className="quoteBtnBar"
-          disabled
-          title="Calendar booking will be available soon"
-          aria-disabled="true"
+          onClick={openBookModal}
+          disabled={!formspreeFormId?.trim()}
+          title={
+            formspreeFormId?.trim()
+              ? 'Send this quote to our team'
+              : 'Add VITE_FORMSPREE_FORM_ID to .env to enable booking'
+          }
+          aria-label="Book your move"
         >
-          Book move
+          Book Your Move
         </button>
         <button type="button" className="quoteBtnBar" onClick={restartWizard}>
           Start over
@@ -806,6 +936,107 @@ export default function QuoteGenerator() {
               {optionsPanel}
             </div>
           </main>
+
+          {bookModalOpen && (
+            <div className="quoteModalBackdrop" role="presentation" onClick={closeBookModal}>
+              <div
+                className="quoteModal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="book-modal-title"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {bookSuccess ? (
+                  <>
+                    <h3 id="book-modal-title" className="quoteModalTitle">
+                      Request sent
+                    </h3>
+                    <p className="quoteModalText">
+                      Thanks — we emailed your quote and contact details to our team. We&apos;ll be in touch soon.
+                    </p>
+                    <div className="quoteModalActions">
+                      <button type="button" className="quoteWizardBtnPrimary" onClick={closeBookModal}>
+                        Close
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3 id="book-modal-title" className="quoteModalTitle">
+                      Book Your Move
+                    </h3>
+                    <p className="quoteModalText">
+                      We&apos;ll email this quote to our team along with your details. Phone is optional.
+                    </p>
+                    <label className="quoteModalHoneypot" htmlFor="book-move-hp" aria-hidden="true">
+                      Company
+                      <input
+                        id="book-move-hp"
+                        type="text"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={bookHoneypot}
+                        onChange={(e) => setBookHoneypot(e.target.value)}
+                      />
+                    </label>
+                    <div className="quoteModalFields">
+                      <label className="quoteModalLabel">
+                        Name
+                        <input
+                          type="text"
+                          className="quoteInput quoteModalInput"
+                          value={bookName}
+                          onChange={(e) => setBookName(e.target.value)}
+                          autoComplete="name"
+                          aria-required="true"
+                        />
+                      </label>
+                      <label className="quoteModalLabel">
+                        Email
+                        <input
+                          type="email"
+                          className="quoteInput quoteModalInput"
+                          value={bookEmail}
+                          onChange={(e) => setBookEmail(e.target.value)}
+                          autoComplete="email"
+                          aria-required="true"
+                        />
+                      </label>
+                      <label className="quoteModalLabel">
+                        Phone <span className="quoteModalOptional">(optional)</span>
+                        <input
+                          type="tel"
+                          className="quoteInput quoteModalInput"
+                          value={bookPhone}
+                          onChange={(e) => setBookPhone(e.target.value)}
+                          autoComplete="tel"
+                        />
+                      </label>
+                    </div>
+                    {bookError && <p className="quoteModalError">{bookError}</p>}
+                    <div className="quoteModalActions">
+                      <button
+                        type="button"
+                        className="quoteWizardBtnGhost"
+                        onClick={closeBookModal}
+                        disabled={bookSending}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="quoteWizardBtnPrimary"
+                        onClick={submitBookMove}
+                        disabled={bookSending}
+                      >
+                        {bookSending ? 'Sending…' : 'Send to Coast Team'}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

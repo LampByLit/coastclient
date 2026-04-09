@@ -5,9 +5,7 @@ export const TRUCK_SIZES = [
   { id: '26', label: "26'", cubicFeet: 1682, baseRental: 49.95, fuelLperKm: 0.32 },
 ]
 
-const PER_KM_MIN = 1.09
-const PER_KM_MAX = 1.29
-export const PER_KM_RATE = (PER_KM_MIN + PER_KM_MAX) / 2
+export const PER_KM_RATE = 1.29
 
 export const LABOR_RATE_PER_HOUR = 60
 
