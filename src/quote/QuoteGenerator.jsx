@@ -953,7 +953,7 @@ export default function QuoteGenerator() {
                       Request sent
                     </h3>
                     <p className="quoteModalText">
-                      Thanks! Somebody from our team will be in touch soon.
+                      Thanks! Somebody from our team will soon be in touch!
                     </p>
                     <div className="quoteModalActions">
                       <button type="button" className="quoteWizardBtnPrimary" onClick={closeBookModal}>
