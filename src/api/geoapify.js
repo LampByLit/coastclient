@@ -3,20 +3,65 @@ import { getQuoteApiBase } from './quoteApiBase'
 /** Same path layout as interior tool (`const BASE = '/api'`). */
 const base = () => getQuoteApiBase()
 
-/** Geoapify GeoJSON features use Point coordinates [lon, lat]. */
+function centroidFromRing(ring) {
+  if (!Array.isArray(ring) || ring.length === 0) return null
+  let sl = 0
+  let sa = 0
+  let n = 0
+  for (const pt of ring) {
+    if (!Array.isArray(pt) || pt.length < 2) continue
+    sl += Number(pt[0])
+    sa += Number(pt[1])
+    n += 1
+  }
+  if (n === 0) return null
+  return { lon: sl / n, lat: sa / n }
+}
+
+/** Geoapify: coords in properties, Point, Polygon centroid, or feature bbox. */
 function latLonFromFeature(f) {
   const p = f?.properties ?? f
-  let lat = p?.lat != null ? Number(p.lat) : null
-  let lon = p?.lon != null ? Number(p.lon) : null
+  let lat =
+    p?.lat != null
+      ? Number(p.lat)
+      : p?.latitude != null
+        ? Number(p.latitude)
+        : null
+  let lon =
+    p?.lon != null ? Number(p.lon) : p?.longitude != null ? Number(p.longitude) : null
   const g = f?.geometry
+  const gt = g?.type ? String(g.type).toLowerCase() : ''
+
   if (
     (lat == null || lon == null || Number.isNaN(lat) || Number.isNaN(lon)) &&
-    g?.type === 'Point' &&
+    gt === 'point' &&
     Array.isArray(g.coordinates) &&
     g.coordinates.length >= 2
   ) {
     lon = Number(g.coordinates[0])
     lat = Number(g.coordinates[1])
+  }
+  if (
+    (lat == null || lon == null || Number.isNaN(lat) || Number.isNaN(lon)) &&
+    gt === 'polygon' &&
+    Array.isArray(g.coordinates?.[0])
+  ) {
+    const c = centroidFromRing(g.coordinates[0])
+    if (c) {
+      lon = c.lon
+      lat = c.lat
+    }
+  }
+  if (
+    (lat == null || lon == null || Number.isNaN(lat) || Number.isNaN(lon)) &&
+    gt === 'multipolygon' &&
+    Array.isArray(g.coordinates?.[0]?.[0])
+  ) {
+    const c = centroidFromRing(g.coordinates[0][0])
+    if (c) {
+      lon = c.lon
+      lat = c.lat
+    }
   }
   if (
     (lat == null || lon == null || Number.isNaN(lat) || Number.isNaN(lon)) &&
@@ -49,7 +94,8 @@ function formattedFromProperties(p) {
 }
 
 function normalizeGeocodeResults(data) {
-  if (!data) return []
+  if (!data || typeof data !== 'object') return []
+  if (data.type === 'FeatureCollection' && Array.isArray(data.features)) return data.features
   if (Array.isArray(data.features) && data.features.length) return data.features
   if (Array.isArray(data.results) && data.results.length) {
     return data.results.map((item) => {

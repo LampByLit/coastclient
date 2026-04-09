@@ -133,9 +133,13 @@
 
 .quoteWizardStopRow {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.quoteWizardStopRow .quoteWizardStopLabel {
+  padding-top: 0.55rem;
 }
 
 .quoteWizardStopLabel {
