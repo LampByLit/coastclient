@@ -2,14 +2,14 @@ import { getQuoteApiBase } from './quoteApiBase'
 
 const base = () => getQuoteApiBase()
 
-/** Geoapify GeoJSON features use Point coordinates [lon, lat]; lat/lon are not always on properties. */
+/** Lat/lon from Geoapify GeoJSON feature, JSON hit, or bbox fallback. */
 function latLonFromFeature(f) {
-  const p = f?.properties || f
-  let lat = p?.lat
-  let lon = p?.lon
+  const p = f?.properties ?? f
+  let lat = p?.lat != null ? Number(p.lat) : null
+  let lon = p?.lon != null ? Number(p.lon) : null
   const g = f?.geometry
   if (
-    (lat == null || lon == null) &&
+    (lat == null || lon == null || Number.isNaN(lat) || Number.isNaN(lon)) &&
     g?.type === 'Point' &&
     Array.isArray(g.coordinates) &&
     g.coordinates.length >= 2
@@ -17,7 +17,52 @@ function latLonFromFeature(f) {
     lon = Number(g.coordinates[0])
     lat = Number(g.coordinates[1])
   }
+  if (
+    (lat == null || lon == null || Number.isNaN(lat) || Number.isNaN(lon)) &&
+    Array.isArray(f?.bbox) &&
+    f.bbox.length >= 4
+  ) {
+    const [minLon, minLat, maxLon, maxLat] = f.bbox.map(Number)
+    if (![minLon, minLat, maxLon, maxLat].some(Number.isNaN)) {
+      lon = (minLon + maxLon) / 2
+      lat = (minLat + maxLat) / 2
+    }
+  }
   return { lat, lon }
+}
+
+function formattedFromProperties(p) {
+  if (!p || typeof p !== 'object') return ''
+  if (p.formatted) return String(p.formatted).trim()
+  if (p.address_line1) {
+    const tail = [p.address_line2, p.city, p.state || p.state_code, p.postcode, p.country].filter(Boolean).join(', ')
+    return tail ? `${p.address_line1}, ${tail}` : String(p.address_line1)
+  }
+  if (p.name) return String(p.name).trim()
+  const line = [p.street, p.housenumber].filter(Boolean).join(' ')
+  const tail = [p.postcode, p.city, p.state || p.state_code, p.country].filter(Boolean).join(', ')
+  if (line && tail) return `${line}, ${tail}`
+  if (line) return line
+  if (tail) return tail
+  return ''
+}
+
+/** Normalize API payload to an array of GeoJSON-like features. */
+function normalizeGeocodeResults(data) {
+  if (!data) return []
+  if (Array.isArray(data.features) && data.features.length) return data.features
+  if (Array.isArray(data.results) && data.results.length) {
+    return data.results.map((item) => {
+      if (item && item.type === 'Feature') return item
+      return {
+        type: 'Feature',
+        properties: item,
+        geometry: item?.geometry ?? null,
+        bbox: item?.bbox,
+      }
+    })
+  }
+  return []
 }
 
 export async function getAutocompleteSuggestions(text) {
@@ -25,17 +70,14 @@ export async function getAutocompleteSuggestions(text) {
   const url = `${base()}/geocode/autocomplete?text=${encodeURIComponent(text.trim())}`
   const res = await fetch(url)
   if (!res.ok) return []
-  const data = await res.json()
-  const features = data.features || data.results || []
+  const data = await res.json().catch(() => null)
+  const features = normalizeGeocodeResults(data)
   return features
     .map((f) => {
       const p = f.properties || f
       const { lat, lon } = latLonFromFeature(f)
-      return {
-        formatted: p.formatted || p.address_line1 || p.name || '',
-        lat,
-        lon,
-      }
+      const formatted = formattedFromProperties(p)
+      return { formatted, lat, lon }
     })
     .filter((s) => s.formatted && s.lat != null && s.lon != null && !Number.isNaN(s.lat) && !Number.isNaN(s.lon))
 }
@@ -45,8 +87,9 @@ export async function geocodeAddress(address) {
   const url = `${base()}/geocode/search?text=${encodeURIComponent(address.trim())}`
   const res = await fetch(url)
   if (!res.ok) return null
-  const data = await res.json()
-  const f = data.features?.[0]
+  const data = await res.json().catch(() => null)
+  const features = normalizeGeocodeResults(data)
+  const f = features[0]
   if (!f) return null
   const { lat, lon } = latLonFromFeature(f)
   if (lat == null || lon == null || Number.isNaN(lat) || Number.isNaN(lon)) return null

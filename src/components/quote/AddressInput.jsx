@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { getAutocompleteSuggestions, geocodeAddress } from '../../api/geoapify'
 import './AddressInput.css'
 
@@ -8,10 +9,37 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
+  const [menuPos, setMenuPos] = useState(null)
   const containerRef = useRef(null)
-  const abortRef = useRef(null)
+  const listRef = useRef(null)
   const debounceRef = useRef(null)
   const justSelectedRef = useRef(false)
+
+  const updateMenuPosition = () => {
+    const el = containerRef.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    setMenuPos({
+      top: r.bottom + 4,
+      left: r.left,
+      width: Math.max(r.width, 200),
+    })
+  }
+
+  useLayoutEffect(() => {
+    if (!open || !suggestions.length) {
+      setMenuPos(null)
+      return
+    }
+    updateMenuPosition()
+    const onScrollOrResize = () => updateMenuPosition()
+    window.addEventListener('scroll', onScrollOrResize, true)
+    window.addEventListener('resize', onScrollOrResize)
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize, true)
+      window.removeEventListener('resize', onScrollOrResize)
+    }
+  }, [open, suggestions])
 
   useEffect(() => {
     if (!value || value.trim().length < 3) {
@@ -22,8 +50,6 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
     }
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
-      if (abortRef.current) abortRef.current.abort()
-      abortRef.current = new AbortController()
       setLoading(true)
       getAutocompleteSuggestions(value)
         .then((list) => {
@@ -43,7 +69,9 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
 
   useEffect(() => {
     function handleClickOutside(e) {
-      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false)
+      const inWrap = containerRef.current?.contains(e.target)
+      const inList = listRef.current?.contains(e.target)
+      if (!inWrap && !inList) setOpen(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -79,6 +107,39 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
       .catch(() => {})
   }
 
+  const listEl =
+    open &&
+    suggestions.length > 0 &&
+    menuPos &&
+    createPortal(
+      <ul
+        ref={listRef}
+        className="addressInputList addressInputListPortal"
+        role="listbox"
+        style={{
+          position: 'fixed',
+          top: menuPos.top,
+          left: menuPos.left,
+          width: menuPos.width,
+          zIndex: 10000,
+        }}
+      >
+        {suggestions.map((s, i) => (
+          <li key={i} role="option">
+            <button
+              type="button"
+              className="addressInputItem"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => handleSelect(s)}
+            >
+              {s.formatted}
+            </button>
+          </li>
+        ))}
+      </ul>,
+      document.body
+    )
+
   return (
     <div className="addressInputWrap" ref={containerRef}>
       <input
@@ -88,21 +149,15 @@ export default function AddressInput({ value, onChange, placeholder = 'Address',
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        onFocus={() => value && suggestions.length > 0 && setOpen(true)}
+        onFocus={() => {
+          if (value && suggestions.length > 0) setOpen(true)
+        }}
         autoComplete="off"
+        aria-autocomplete="list"
+        aria-expanded={open && suggestions.length > 0}
       />
       {loading && <span className="addressInputSpinner" aria-hidden />}
-      {open && suggestions.length > 0 && (
-        <ul className="addressInputList">
-          {suggestions.map((s, i) => (
-            <li key={i}>
-              <button type="button" className="addressInputItem" onClick={() => handleSelect(s)}>
-                {s.formatted}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {listEl}
     </div>
   )
 }

@@ -27,20 +27,19 @@
 }
 
 .addressInputList {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
   margin: 0;
   padding: 4px 0;
   list-style: none;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 30;
-  max-height: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  max-height: min(240px, 40vh);
   overflow-y: auto;
+}
+
+.addressInputListPortal {
+  position: fixed;
 }
 
 .addressInputItem {
