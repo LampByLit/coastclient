@@ -11,6 +11,9 @@ export default function Layout() {
         <div className="headerInner">
           <Logo />
           <nav className="siteNav" aria-label="Main">
+            <NavLink to="/" className={navClass} end>
+              GET A QUOTE
+            </NavLink>
             <NavLink to="/portfolio" className={navClass}>
               Portfolio
             </NavLink>

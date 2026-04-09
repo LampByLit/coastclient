@@ -425,9 +425,6 @@ export default function QuoteGenerator() {
     <header className="quoteAppBar no-print">
       <h2 className="quoteAppTitle">Your moving quote</h2>
       <div className="quoteAppBarActions no-print">
-        <button type="button" className="quoteBtnBar" onClick={() => window.print()} aria-label="Print quote">
-          Print
-        </button>
         <button
           type="button"
           className="quoteBtnBar"
@@ -441,6 +438,9 @@ export default function QuoteGenerator() {
           aria-label="Book your move"
         >
           Book Your Move
+        </button>
+        <button type="button" className="quoteBtnBar" onClick={() => window.print()} aria-label="Print quote">
+          Print
         </button>
         <button type="button" className="quoteBtnBar" onClick={restartWizard}>
           Start over
