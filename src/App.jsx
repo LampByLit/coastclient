@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
-import PortfolioPage from './pages/PortfolioPage'
+import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 
 export default function App() {
@@ -10,7 +10,9 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/reviews" element={<Navigate to="/about" replace />} />
+          <Route path="/portfolio" element={<Navigate to="/about" replace />} />
           <Route path="/contact" element={<ContactPage />} />
         </Route>
       </Routes>

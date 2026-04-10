@@ -14,8 +14,8 @@ export default function Layout() {
             <NavLink to="/" className={navClass} end>
               GET A QUOTE
             </NavLink>
-            <NavLink to="/portfolio" className={navClass}>
-              Portfolio
+            <NavLink to="/about" className={navClass}>
+              About
             </NavLink>
             <NavLink to="/contact" className={navClass}>
               Contact
