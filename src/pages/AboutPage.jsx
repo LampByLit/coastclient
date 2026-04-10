@@ -52,7 +52,7 @@ export default function AboutPage() {
       <div className="pageInner">
         <h1 className="pageTitle">About</h1>
         <p className="pageLead">
-          Coast Team Moving specialize in residential or small commercial moving projects on Vancouver Island and beyond! See what clients are saying about our service. You can also read more reviews (and leave your own) on{' '}
+          Coast Team Moving specializes in residential or small commercial moving projects on Vancouver Island and beyond! See what clients are saying about our service. You can also read more reviews (and leave your own) on{' '}
           <a
             className="reviewsGoogleLink"
             href={GOOGLE_REVIEWS_URL}
