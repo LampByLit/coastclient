@@ -973,7 +973,7 @@ export default function QuoteGenerator() {
                       Book Your Move
                     </h3>
                     <p className="quoteModalText">
-                      We&apos;ll email this quote to our team along with your details. Phone is optional.
+                      Please fill out your information to have a member of our team review your move and contact you.
                     </p>
                     <label className="quoteModalHoneypot" htmlFor="book-move-hp" aria-hidden="true">
                       Company
