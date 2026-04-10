@@ -12,7 +12,7 @@ export default function Layout() {
           <Logo />
           <nav className="siteNav" aria-label="Main">
             <NavLink to="/" className={navClass} end>
-              GET A QUOTE
+              BOOK YOUR MOVE
             </NavLink>
             <NavLink to="/about" className={navClass}>
               About
