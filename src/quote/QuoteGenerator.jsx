@@ -46,6 +46,7 @@ export default function QuoteGenerator() {
   const [requiresTruck, setRequiresTruck] = useState(true)
   const [truckSize, setTruckSize] = useState(TRUCK_SIZES[0].id)
   const [destinations, setDestinations] = useState(() => emptyStops())
+  const [moveDetails, setMoveDetails] = useState('')
   const [movers, setMovers] = useState([
     { id: 1, hours: MIN_HOURS_PER_MOVER },
     { id: 2, hours: MIN_HOURS_PER_MOVER },
@@ -89,6 +90,7 @@ export default function QuoteGenerator() {
         setBookEmail('')
         setBookPhone('')
         setBookHoneypot('')
+        setMoveDetails('')
       }
       return false
     })
@@ -127,6 +129,7 @@ export default function QuoteGenerator() {
       { name, email, phone: bookPhone },
       {
         dateLine: dateEnabled && moveDate ? formatPrintDate(moveDate) : '',
+        moveDetails,
         destinations,
         requiresTruck,
         truck,
@@ -387,6 +390,7 @@ export default function QuoteGenerator() {
     setRequiresTruck(true)
     setTruckSize(TRUCK_SIZES[0].id)
     setDestinations(emptyStops())
+    setMoveDetails('')
     setMovers([
       { id: 1, hours: MIN_HOURS_PER_MOVER },
       { id: 2, hours: MIN_HOURS_PER_MOVER },
@@ -506,6 +510,20 @@ export default function QuoteGenerator() {
       <button type="button" className="quoteBtnSecondary" onClick={addStop}>
         + Add stop
       </button>
+      <div className="quoteMoveDetails">
+        <label className="quoteMoveDetailsLabel" htmlFor="quote-move-details">
+          Move details
+        </label>
+        <textarea
+          id="quote-move-details"
+          className="quoteInput quoteTextarea"
+          placeholder="Please describe your move"
+          value={moveDetails}
+          onChange={(e) => setMoveDetails(e.target.value)}
+          rows={4}
+          aria-label="Please describe your move"
+        />
+      </div>
     </section>
   )
 
@@ -555,6 +573,12 @@ export default function QuoteGenerator() {
             </li>
           ))}
         </ul>
+        {moveDetails.trim() && (
+          <>
+            <h2 className="printItemizationTitle">Move details</h2>
+            <p className="printDetail printMoveDetailsBody">{moveDetails.trim()}</p>
+          </>
+        )}
         <h2 className="printItemizationTitle">Truck</h2>
         <p className="printDetail">
           {requiresTruck
@@ -912,6 +936,20 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteBtnSecondary" onClick={addStop}>
                 + Add stop
               </button>
+              <div className="quoteMoveDetails quoteMoveDetailsWizard">
+                <label className="quoteMoveDetailsLabel" htmlFor="wizard-move-details">
+                  Move details
+                </label>
+                <textarea
+                  id="wizard-move-details"
+                  className="quoteInput quoteTextarea"
+                  placeholder="Please describe your move"
+                  value={moveDetails}
+                  onChange={(e) => setMoveDetails(e.target.value)}
+                  rows={4}
+                  aria-label="Please describe your move"
+                />
+              </div>
               <div className="quoteWizardActions">
                 <button type="button" className="quoteWizardLink quoteWizardBack" onClick={wizardBack}>
                   Back

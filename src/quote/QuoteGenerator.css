@@ -158,6 +158,40 @@
   box-shadow: 0 0 0 2px rgba(1, 158, 255, 0.45);
 }
 
+.quoteGen .quoteTextarea {
+  display: block;
+  width: 100%;
+  min-height: 88px;
+  resize: vertical;
+  line-height: 1.45;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.quoteGen .quoteMoveDetails {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.quoteGen .quoteMoveDetailsWizard {
+  margin-top: 16px;
+  padding-top: 0;
+  border-top: none;
+}
+
+.quoteGen .quoteMoveDetailsLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.quoteGen .printMoveDetailsBody {
+  white-space: pre-wrap;
+}
+
 .quoteGen .quoteBtnIcon {
   flex-shrink: 0;
   width: 40px;

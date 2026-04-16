@@ -15,6 +15,11 @@ export function buildBookMovePlainText(contact, q) {
     lines.push(`Date: ${q.dateLine}`)
   }
 
+  const details = typeof q.moveDetails === 'string' ? q.moveDetails.trim() : ''
+  if (details) {
+    lines.push(`Move details: ${details}`)
+  }
+
   const routeParts = q.destinations.map((d, i) => {
     const tag =
       i === 0 ? 'Origin' : i === q.destinations.length - 1 ? 'Destination' : `Stop ${i + 1}`
