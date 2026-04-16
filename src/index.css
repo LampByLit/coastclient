@@ -36,9 +36,39 @@ a {
 }
 
 .layout {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Light, non-interactive logo behind page content */
+.layoutWatermark {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.layoutWatermark__img {
+  width: min(220vw, 160rem);
+  height: min(125vh, 100rem);
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.055;
+  filter: grayscale(0.15);
+}
+
+.siteHeader,
+.siteMain,
+.siteFooter {
+  position: relative;
+  z-index: 1;
 }
 
 .siteHeader {
@@ -425,6 +455,10 @@ a.contactValue:hover {
 }
 
 @media print {
+  .layoutWatermark {
+    display: none !important;
+  }
+
   .siteHeader,
   .siteFooter,
   .hero {
