@@ -1,6 +1,8 @@
 :root {
-  --brand: #ffc81e;
-  --brand-dark: #e0b010;
+  --brand: #019eff;
+  --brand-accent: #02c2ff;
+  /* Darker blue for hovers / emphasis on light backgrounds */
+  --brand-dark: #0178cc;
   --ink: #1a1a1a;
   --muted: #5c5c5c;
   --bg: #fafafa;
@@ -92,12 +94,12 @@ a {
 }
 
 .navLink:hover {
-  background: rgba(255, 200, 30, 0.25);
+  background: rgba(1, 158, 255, 0.18);
 }
 
 .navLinkActive {
   background: var(--brand);
-  color: var(--ink);
+  color: var(--white);
 }
 
 .siteMain {
@@ -105,8 +107,8 @@ a {
 }
 
 .hero {
-  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
-  color: var(--ink);
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-accent) 100%);
+  color: var(--white);
   padding: clamp(1.35rem, 3.2vw, 2.25rem) 1.25rem;
 }
 
@@ -256,7 +258,7 @@ a {
   display: block;
   height: 10px;
   border-radius: 6px;
-  background: linear-gradient(90deg, var(--brand), rgba(255, 200, 30, 0.35));
+  background: linear-gradient(90deg, var(--brand), rgba(1, 158, 255, 0.35));
   max-width: 100%;
 }
 
@@ -337,7 +339,7 @@ a.contactValue:hover {
   gap: 0.5rem 1rem;
   margin-bottom: 0.85rem;
   padding-bottom: 0.85rem;
-  border-bottom: 2px solid rgba(255, 200, 30, 0.45);
+  border-bottom: 2px solid rgba(1, 158, 255, 0.45);
 }
 
 .reviewAuthor {
@@ -359,7 +361,7 @@ a.contactValue:hover {
 }
 
 .reviewStars {
-  color: #c9a227;
+  color: var(--brand);
   letter-spacing: 0.02em;
 }
 

@@ -15,7 +15,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid rgba(0, 0, 0, 0.2);
-  border-top-color: var(--quote-accent, #ffc81e);
+  border-top-color: var(--quote-accent, #019eff);
   border-radius: 50%;
   animation: quoteAddressInputSpin 0.6s linear infinite;
 }
@@ -57,6 +57,6 @@
 }
 
 .quoteAddressInputItem:hover {
-  background: rgba(255, 200, 30, 0.2);
+  background: rgba(1, 158, 255, 0.2);
   color: var(--ink, #1a1a1a);
 }

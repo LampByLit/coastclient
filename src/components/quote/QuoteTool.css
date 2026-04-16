@@ -6,7 +6,7 @@
 }
 
 .appBar {
-  background-color: #009B77;
+  background-color: #019eff;
   color: #fff;
   padding: 16px 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
@@ -26,7 +26,7 @@
   padding: 8px 16px;
   font-size: 0.875rem;
   font-family: inherit;
-  color: #009B77;
+  color: #019eff;
   background: #fff;
   border: none;
   border-radius: 4px;
@@ -135,8 +135,8 @@
 
 .qtInput:focus {
   outline: none;
-  border-color: #009B77;
-  box-shadow: 0 0 0 1px #009B77;
+  border-color: #019eff;
+  box-shadow: 0 0 0 1px #019eff;
 }
 
 .btnIcon {
@@ -155,8 +155,8 @@
 
 .btnIcon:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.04);
-  color: #009B77;
-  border-color: #009B77;
+  color: #019eff;
+  border-color: #019eff;
 }
 
 .btnIcon:disabled {
@@ -168,9 +168,9 @@
   padding: 8px 16px;
   font-size: 0.875rem;
   font-family: inherit;
-  color: #009B77;
+  color: #019eff;
   background: transparent;
-  border: 1px solid #009B77;
+  border: 1px solid #019eff;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -203,7 +203,7 @@
 }
 
 .truckCardActive {
-  border-color: #009B77;
+  border-color: #019eff;
   border-width: 2px;
   background: rgba(6, 148, 148, 0.08);
 }
@@ -223,7 +223,7 @@
 .truckPrice {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #009B77;
+  color: #019eff;
   margin-top: 1px;
 }
 
@@ -253,7 +253,7 @@
 .toggleRow input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: #009B77;
+  accent-color: #019eff;
   cursor: pointer;
 }
 
@@ -301,7 +301,7 @@
 
 .fuelSelect:focus {
   outline: none;
-  border-color: #009B77;
+  border-color: #019eff;
 }
 
 .fuelBtn {
@@ -337,7 +337,7 @@
 .fuelStationPrice {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #009B77;
+  color: #019eff;
 }
 
 .fuelStationAddr {
@@ -380,7 +380,7 @@
 }
 
 .quoteCard {
-  border-left: 4px solid #009B77;
+  border-left: 4px solid #019eff;
 }
 
 .quoteMeta {
@@ -446,7 +446,7 @@
 
 .quoteTotal dd {
   font-size: 1.25rem;
-  color: #009B77;
+  color: #019eff;
 }
 
 .quoteMapWrap {
@@ -572,7 +572,7 @@
   }
 
   .appBar {
-    background: #009B77;
+    background: #019eff;
     color: #fff;
     box-shadow: none;
     padding: 12px 0;
@@ -597,7 +597,7 @@
   }
 
   .quoteCard {
-    border-left: 4px solid #009B77;
+    border-left: 4px solid #019eff;
   }
 
   .card {
@@ -606,7 +606,7 @@
   }
 
   .quoteTotal dd {
-    color: #009B77;
+    color: #019eff;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

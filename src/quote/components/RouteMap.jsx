@@ -24,7 +24,7 @@ function FitBounds({ waypoints, routeCoordinates }) {
 }
 
 function createMarkerIcon(label, isEnd) {
-  const accent = '#ffc81e'
+  const accent = '#019eff'
   const muted = '#5c5c5c'
   const color = isEnd ? accent : muted
   return L.divIcon({
@@ -32,7 +32,7 @@ function createMarkerIcon(label, isEnd) {
     html: `<span style="
       display:inline-flex;align-items:center;justify-content:center;
       width:20px;height:20px;border-radius:50%;
-      background:${color};color:#1a1a1a;border:2px solid #fff;
+      background:${color};color:${isEnd ? '#fff' : '#1a1a1a'};border:2px solid #fff;
       font-size:10px;font-weight:700;line-height:1;
     ">${label}</span>`,
     iconSize: [20, 20],
@@ -68,7 +68,7 @@ export default function RouteMap({ waypoints = [], routeCoordinates = null }) {
           <Polyline
             positions={routePositions}
             pathOptions={{
-              color: '#e0b010',
+              color: '#019eff',
               weight: 4,
               opacity: 0.95,
             }}

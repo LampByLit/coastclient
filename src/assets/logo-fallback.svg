@@ -1,4 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 72" role="img" aria-label="Coast Team Moving">
-  <rect width="300" height="72" rx="10" fill="#FFC81E"/>
-  <text x="150" y="46" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1a1a1a">COAST TEAM MOVING</text>
+  <defs>
+    <linearGradient id="logoBar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#019EFF"/>
+      <stop offset="100%" stop-color="#02C2FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="72" rx="10" fill="url(#logoBar)"/>
+  <text x="150" y="46" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">COAST TEAM MOVING</text>
 </svg>

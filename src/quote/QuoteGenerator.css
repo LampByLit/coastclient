@@ -1,6 +1,7 @@
 .quoteGen {
-  --quote-accent: #ffc81e;
-  --quote-accent-dark: #e0b010;
+  --quote-accent: #019eff;
+  --quote-accent-bright: #02c2ff;
+  --quote-accent-hover: #0178cc;
   --quote-ink: #1a1a1a;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
@@ -15,8 +16,8 @@
 }
 
 .quoteGen .quoteAppBar {
-  background: linear-gradient(135deg, var(--quote-accent) 0%, var(--quote-accent-dark) 100%);
-  color: var(--quote-ink);
+  background: linear-gradient(135deg, var(--quote-accent) 0%, var(--quote-accent-bright) 100%);
+  color: #fff;
   padding: 14px 20px;
   display: flex;
   align-items: center;
@@ -153,8 +154,8 @@
 
 .quoteGen .quoteInput:focus {
   outline: none;
-  border-color: var(--quote-accent-dark);
-  box-shadow: 0 0 0 2px rgba(255, 200, 30, 0.45);
+  border-color: var(--quote-accent);
+  box-shadow: 0 0 0 2px rgba(1, 158, 255, 0.45);
 }
 
 .quoteGen .quoteBtnIcon {
@@ -173,9 +174,9 @@
 }
 
 .quoteGen .quoteBtnIcon:hover:not(:disabled) {
-  background: rgba(255, 200, 30, 0.2);
+  background: rgba(1, 158, 255, 0.2);
   color: var(--quote-ink);
-  border-color: var(--quote-accent-dark);
+  border-color: var(--quote-accent);
 }
 
 .quoteGen .quoteBtnIcon:disabled {
@@ -190,13 +191,13 @@
   font-weight: 700;
   color: var(--quote-ink);
   background: transparent;
-  border: 2px solid var(--quote-accent-dark);
+  border: 2px solid var(--quote-accent);
   border-radius: 6px;
   cursor: pointer;
 }
 
 .quoteGen .quoteBtnSecondary:hover {
-  background: rgba(255, 200, 30, 0.25);
+  background: rgba(1, 158, 255, 0.25);
 }
 
 .quoteGen .quoteTruckGrid {
@@ -224,8 +225,8 @@
 }
 
 .quoteGen .quoteTruckCardActive {
-  border-color: var(--quote-accent-dark);
-  background: rgba(255, 200, 30, 0.35);
+  border-color: var(--quote-accent);
+  background: rgba(1, 158, 255, 0.35);
 }
 
 .quoteGen .quoteTruckLabel {
@@ -273,7 +274,7 @@
 .quoteGen .quoteToggleRow input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--quote-accent-dark);
+  accent-color: var(--quote-accent);
   cursor: pointer;
 }
 
@@ -360,7 +361,7 @@
 }
 
 .quoteGen .quoteQuoteCard {
-  border-left: 4px solid var(--quote-accent-dark);
+  border-left: 4px solid var(--quote-accent);
 }
 
 .quoteGen .quoteMeta {
@@ -630,13 +631,13 @@
   font-weight: 700;
   font-size: 0.95rem;
   border: 2px solid rgba(26, 26, 26, 0.25);
-  background: rgba(255, 200, 30, 0.2);
+  background: rgba(1, 158, 255, 0.2);
   color: var(--quote-ink);
   cursor: pointer;
 }
 
 .quoteWizardBtnGhost:hover {
-  background: rgba(255, 200, 30, 0.4);
+  background: rgba(1, 158, 255, 0.4);
 }
 
 .quoteWizardBtnChoice {
@@ -645,19 +646,20 @@
   font-family: inherit;
   font-weight: 700;
   font-size: 0.9rem;
-  border: 2px solid var(--quote-accent-dark);
+  border: 2px solid var(--quote-accent);
   background: #fff;
   color: var(--quote-ink);
   cursor: pointer;
 }
 
 .quoteWizardBtnChoice:hover {
-  background: rgba(255, 200, 30, 0.35);
+  background: rgba(1, 158, 255, 0.35);
 }
 
 .quoteWizardBtnChoiceActive {
   background: var(--quote-accent);
   border-color: var(--quote-ink);
+  color: #fff;
 }
 
 .quoteWizardDate {
@@ -672,7 +674,7 @@
 
 .quoteWizardDate:focus {
   outline: none;
-  border-color: var(--quote-accent-dark);
+  border-color: var(--quote-accent);
 }
 
 .quoteWizardTruckGrid {
@@ -695,7 +697,7 @@
 }
 
 .quoteWizardLink:hover {
-  color: var(--quote-accent-dark);
+  color: var(--quote-accent-hover);
 }
 
 .quoteWizardBack {
