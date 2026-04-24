@@ -358,8 +358,8 @@ export default function QuoteGenerator() {
     goWizardAddresses()
   }
   const wizardSkipTruckQuestion = () => {
-    setRequiresTruck(true)
-    goWizardTruckSize()
+    setRequiresTruck(false)
+    goWizardAddresses()
   }
 
   const wizardChooseTruckSize = (id) => {
