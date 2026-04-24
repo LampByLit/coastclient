@@ -53,9 +53,11 @@ export default function Layout() {
         <Outlet />
       </main>
 
+      {/* Footer removed per request — restore if needed
       <footer className="siteFooter">
         <p className="footerText">© {new Date().getFullYear()} Coast Team Moving</p>
       </footer>
+      */}
     </div>
   )
 }
