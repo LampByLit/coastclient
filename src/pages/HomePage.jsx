@@ -9,9 +9,7 @@ export default function HomePage() {
             Moving made easy.
           </h1>
           <p className="heroLead">
-            Straightforward quotes and careful crews
-            <br />
-            with the most affordable rates on Vancouver{'\u00a0'}Island.
+            The most affordable rates on Vancouver{'\u00a0'}Island.
           </p>
         </div>
       </section>
