@@ -957,9 +957,6 @@ export default function QuoteGenerator() {
                 <button type="button" className="quoteWizardBtnPrimary" onClick={finishWizard}>
                   See my quote
                 </button>
-                <button type="button" className="quoteWizardLink" onClick={finishWizard}>
-                  Skip for now
-                </button>
               </div>
             </>
           )}
