@@ -899,7 +899,7 @@ export default function QuoteGenerator() {
                 <button type="button" className="quoteWizardLink quoteWizardBack" onClick={wizardBack}>
                   Back
                 </button>
-                <button type="button" className="quoteWizardBtnGhost" onClick={wizardSkipTruckSize}>
+                <button type="button" className="quoteWizardLink" onClick={wizardSkipTruckSize}>
                   Skip for now
                 </button>
               </div>
