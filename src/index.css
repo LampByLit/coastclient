@@ -364,18 +364,11 @@ a.contactValue:hover {
 .reviewCardHeader {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
   gap: 0.5rem 1rem;
   margin-bottom: 0.85rem;
   padding-bottom: 0.85rem;
   border-bottom: 2px solid rgba(1, 158, 255, 0.45);
-}
-
-.reviewAuthor {
-  margin: 0;
-  font-size: 1.15rem;
-  letter-spacing: -0.02em;
 }
 
 .reviewRating {
