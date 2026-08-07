@@ -152,6 +152,10 @@ export default function QuoteGenerator() {
       }
     )
 
+    const bookingDatePart =
+      dateEnabled && moveDate ? ` — ${formatPrintDate(moveDate)}` : ''
+    const bookingSubject = `Move booking: ${name}${bookingDatePart}`
+
     setBookSending(true)
     setBookError('')
     try {
@@ -163,7 +167,7 @@ export default function QuoteGenerator() {
         },
         body: JSON.stringify({
           access_key: web3formsAccessKey,
-          subject: 'New Move Booking Inquiry',
+          subject: bookingSubject,
           from_name: 'Coast Team Moving website',
           replyto: email,
           name,
