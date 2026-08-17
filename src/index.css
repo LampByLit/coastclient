@@ -136,6 +136,22 @@ a {
   flex: 1;
 }
 
+.constructionPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.constructionPage__line {
+  margin: 0;
+  font-family: var(--font-bold);
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+}
+
 .hero {
   background: linear-gradient(135deg, var(--brand) 0%, var(--brand-accent) 100%);
   color: var(--white);

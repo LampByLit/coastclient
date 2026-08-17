@@ -1,10 +1,6 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useState } from 'react'
-import Logo from './Logo'
 import logoFallback from '../assets/logo-fallback.svg'
-
-const navClass = ({ isActive }) =>
-  `navLink ${isActive ? 'navLinkActive' : ''}`.trim()
 
 function LayoutWatermark() {
   const [src, setSrc] = useState('/Coast Logo Full SIze.png')
@@ -32,23 +28,6 @@ export default function Layout() {
   return (
     <div className="layout">
       <LayoutWatermark />
-      <header className="siteHeader">
-        <div className="headerInner">
-          <Logo />
-          <nav className="siteNav" aria-label="Main">
-            <NavLink to="/" className={navClass} end>
-              BOOK YOUR MOVE
-            </NavLink>
-            <NavLink to="/about" className={navClass}>
-              About
-            </NavLink>
-            <NavLink to="/contact" className={navClass}>
-              Contact
-            </NavLink>
-          </nav>
-        </div>
-      </header>
-
       <main className="siteMain">
         <Outlet />
       </main>
