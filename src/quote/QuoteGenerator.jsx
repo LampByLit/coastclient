@@ -62,8 +62,8 @@ export default function QuoteGenerator() {
   const [email, setEmail] = useState('')
   const [honeypot, setHoneypot] = useState('')
   const [moveDate, setMoveDate] = useState('')
-  const [moverCount, setMoverCount] = useState('')
-  const [hours, setHours] = useState('')
+  const [moverCount, setMoverCount] = useState(DEFAULT_MOVERS)
+  const [hours, setHours] = useState(MIN_HOURS_PER_MOVER)
   const [destinations, setDestinations] = useState(() => emptyStops())
   const [moveDetails, setMoveDetails] = useState('')
   const [error, setError] = useState('')
@@ -71,6 +71,11 @@ export default function QuoteGenerator() {
 
   const web3formsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY?.trim()
   const wizardStepNumber = WIZARD_STEPS[wizardStep] || 1
+
+  const skipTo = (step) => {
+    setError('')
+    setWizardStep(step)
+  }
 
   const openConfig = () => {
     setError('')
@@ -87,8 +92,8 @@ export default function QuoteGenerator() {
     setEmail('')
     setHoneypot('')
     setMoveDate('')
-    setMoverCount('')
-    setHours('')
+    setMoverCount(DEFAULT_MOVERS)
+    setHours(MIN_HOURS_PER_MOVER)
     setDestinations(emptyStops())
     setMoveDetails('')
     setError('')
@@ -158,8 +163,6 @@ export default function QuoteGenerator() {
       return
     }
     setError('')
-    if (moverCount === '') setMoverCount(String(DEFAULT_MOVERS))
-    if (hours === '') setHours(String(MIN_HOURS_PER_MOVER))
     setWizardStep('movers')
   }
 
@@ -274,8 +277,7 @@ export default function QuoteGenerator() {
       <div className="quoteGen">
         <div className="quoteApp">
           <header className="quoteAppBar no-print">
-            <h2 className="quoteAppTitle">Your move</h2>
-            <div className="quoteAppBarActions no-print">
+            <div className="quoteAppBarActions no-print" style={{ marginLeft: 'auto' }}>
               <button
                 type="button"
                 className="quoteBtnBar"
@@ -506,7 +508,7 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteWizardBtnPrimary" onClick={goNextFromContact}>
                 Next
               </button>
-              <button type="button" className="quoteWizardLink" onClick={openConfig}>
+              <button type="button" className="quoteWizardLink" onClick={() => skipTo('date')}>
                 Skip for now
               </button>
             </div>
@@ -533,7 +535,7 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteWizardBtnPrimary" onClick={goNextFromDate}>
                 Next
               </button>
-              <button type="button" className="quoteWizardLink" onClick={openConfig}>
+              <button type="button" className="quoteWizardLink" onClick={() => skipTo('movers')}>
                 Skip for now
               </button>
             </div>
@@ -581,7 +583,7 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteWizardBtnPrimary" onClick={goNextFromMovers}>
                 Next
               </button>
-              <button type="button" className="quoteWizardLink" onClick={openConfig}>
+              <button type="button" className="quoteWizardLink" onClick={() => skipTo('addresses')}>
                 Skip for now
               </button>
             </div>
