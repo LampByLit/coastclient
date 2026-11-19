@@ -4,6 +4,8 @@
  * Nothing in this text is shown to the customer.
  */
 
+import { LABOR_RATE_PER_HOUR } from './data/pricing'
+
 const PROVINCE = /^(AB|BC|MB|NB|NL|NS|NT|NU|ON|PE|QC|SK|YT)(\b|\s)/i
 
 function formatMoveDate(iso) {
@@ -72,16 +74,22 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
   const contactLine = [phoneText, emailText].filter(Boolean).join('| ')
   const contactLines = [fullName, contactLine, dateText].filter(Boolean)
 
+  const men = Math.max(1, Number(moverCount) || 1)
+  const shownHours = Number.isFinite(Number(hours)) ? Number(hours) : Number(formatHours(hours))
+  const quotePrice = men * shownHours * LABOR_RATE_PER_HOUR
+
   const lines = [
     title,
     '',
     ...(addresses.length ? [...addresses, ''] : []),
-    `${Math.max(1, Number(moverCount) || 1)} man`,
-    `${formatHours(hours)} hrs`,
+    `${men} man`,
+    `${formatHours(shownHours)} hrs`,
     ...(contactLines.length ? ['', ...contactLines] : []),
     '',
     'Move Details:',
     details,
+    '',
+    `Quote Price: $${quotePrice.toFixed(2)}`,
   ]
 
   return { subject: title, body: lines.join('\n') }
