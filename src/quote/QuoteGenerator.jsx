@@ -158,23 +158,6 @@ export default function QuoteGenerator() {
       setError('Please enter at least one address.')
       return
     }
-    if (!name.trim() || phoneDigits(phone).length !== 10 || !isValidEmail(email)) {
-      setError('Name, phone, and email are still needed.')
-      setWizardStep('contact')
-      return
-    }
-    if (!moveDate) {
-      setError('A move date is still needed.')
-      setWizardStep('date')
-      return
-    }
-    const count = Number(moverCount)
-    const bookedHours = Number(hours)
-    if (!Number.isFinite(count) || count < MIN_MOVERS || !Number.isFinite(bookedHours) || bookedHours < MIN_HOURS_PER_MOVER) {
-      setError(`Use at least ${MIN_MOVERS} mover and ${MIN_HOURS_PER_MOVER} hours.`)
-      setWizardStep('movers')
-      return
-    }
     if (honeypot.trim()) return
 
     setSending(true)

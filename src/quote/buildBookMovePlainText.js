@@ -61,11 +61,16 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
   const fullName = String(name || '').trim()
   const lastName = lastNameFrom(fullName)
   const city = firstCity(destinations)
-  const title = city ? `W - ${lastName} - MOVE - ${city}` : `W - ${lastName} - MOVE`
+  const title = ['W', lastName, 'MOVE', city].filter(Boolean).join(' - ')
   const addresses = (destinations || [])
     .map((stop) => (typeof stop.address === 'string' ? stop.address.trim() : ''))
     .filter(Boolean)
   const details = typeof moveDetails === 'string' ? moveDetails.trim() : ''
+  const phoneText = formatBookingPhone(phone)
+  const emailText = String(email || '').trim()
+  const dateText = formatMoveDate(moveDate)
+  const contactLine = [phoneText, emailText].filter(Boolean).join('| ')
+  const contactLines = [fullName, contactLine, dateText].filter(Boolean)
 
   const lines = [
     title,
@@ -73,10 +78,7 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
     ...(addresses.length ? [...addresses, ''] : []),
     `${Math.max(1, Number(moverCount) || 1)} man`,
     `${formatHours(hours)} hrs`,
-    '',
-    fullName,
-    `${formatBookingPhone(phone)}| ${String(email || '').trim()}`,
-    formatMoveDate(moveDate),
+    ...(contactLines.length ? ['', ...contactLines] : []),
     '',
     'Move Details:',
     details,
