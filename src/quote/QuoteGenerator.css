@@ -602,6 +602,7 @@
 
 /* Wizard */
 .quoteWizard {
+  position: relative;
   background: #fff;
   border-radius: 12px;
   padding: clamp(1.25rem, 3vw, 2rem);
@@ -736,6 +737,33 @@
 
 .quoteWizardBack {
   margin-right: auto;
+}
+
+.quoteWizardError {
+  margin: 0.85rem 0 0;
+  color: #8b0000;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.quoteWizardNumber {
+  max-width: 8rem;
+}
+
+.quoteWizardBtnPrimary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.quotePreview {
+  margin: 0.75rem 0 0;
+  padding: 12px 14px;
+  white-space: pre-wrap;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
 }
 
 .quoteKeyMissing {

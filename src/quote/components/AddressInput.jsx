@@ -51,7 +51,7 @@ export default function AddressInput({ value, onChange, placeholder = 'Address' 
 
   const handleSelect = (s) => {
     justSelectedRef.current = true
-    onChange(s.formatted, s.lat, s.lon)
+    onChange(s.formatted, s.lat, s.lon, s.city || '')
     setSuggestions([])
     setOpen(false)
   }
@@ -73,7 +73,7 @@ export default function AddressInput({ value, onChange, placeholder = 'Address' 
     geocodeAddress(value.trim())
       .then((coords) => {
         if (coords && coords.lat != null && coords.lon != null) {
-          onChange(value.trim(), coords.lat, coords.lon)
+          onChange(value.trim(), coords.lat, coords.lon, coords.city || '')
         }
       })
       .catch(() => {})

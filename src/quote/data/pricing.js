@@ -9,5 +9,6 @@ export const PER_KM_RATE = 1.29
 
 export const LABOR_RATE_PER_HOUR = 70
 
-export const MIN_MOVERS = 2
+export const MIN_MOVERS = 1
+export const DEFAULT_MOVERS = 2
 export const MIN_HOURS_PER_MOVER = 2

@@ -4,6 +4,11 @@ function apiKey() {
   return import.meta.env.GEOAPIFY_API_KEY || ''
 }
 
+function placeCity(p) {
+  if (!p) return ''
+  return p.city || p.town || p.village || p.municipality || ''
+}
+
 export async function getAutocompleteSuggestions(text) {
   if (!apiKey() || !text || text.trim().length < 3) return []
   const url = `${GEOAPIFY_BASE}/geocode/autocomplete?text=${encodeURIComponent(text.trim())}&format=json&limit=5&apiKey=${apiKey()}`
@@ -21,6 +26,7 @@ export async function getAutocompleteSuggestions(text) {
         formatted: p.formatted || p.address_line1 || p.name || '',
         lat,
         lon,
+        city: placeCity(p),
       }
     })
     .filter((s) => s.formatted && s.lat != null && s.lon != null)
@@ -39,7 +45,7 @@ export async function geocodeAddress(address) {
   const lon = coords?.[0] ?? p.lon
   const lat = coords?.[1] ?? p.lat
   if (lat == null || lon == null) return null
-  return { lat, lon }
+  return { lat, lon, city: placeCity(p) }
 }
 
 export async function getRouteDistanceKm(waypoints) {

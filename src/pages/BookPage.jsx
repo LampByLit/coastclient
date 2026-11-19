@@ -1,6 +1,6 @@
 import QuoteGenerator from '../quote/QuoteGenerator'
 
-export default function HomePage() {
+export default function BookPage() {
   return (
     <>
       <section className="hero" aria-labelledby="hero-heading">
@@ -14,7 +14,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section sectionQuote" id="quote-app" aria-label="Get a quote">
+      <section className="section sectionQuote" id="quote-app" aria-label="Book your move">
         <div className="sectionInner sectionInnerWide">
           <QuoteGenerator />
         </div>

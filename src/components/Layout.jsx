@@ -37,10 +37,10 @@ export default function Layout() {
           <Logo />
           <nav className="siteNav" aria-label="Main">
             <NavLink to="/" className={navClass} end>
-              BOOK YOUR MOVE
-            </NavLink>
-            <NavLink to="/about" className={navClass}>
               About
+            </NavLink>
+            <NavLink to="/book" className={navClass}>
+              BOOK YOUR MOVE
             </NavLink>
             <NavLink to="/contact" className={navClass}>
               Contact
