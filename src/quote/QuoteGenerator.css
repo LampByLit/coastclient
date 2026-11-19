@@ -64,6 +64,24 @@
   padding: 20px;
 }
 
+.quoteGen .quoteConfigGrid {
+  display: grid;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.quoteGen .quoteConfigStops {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 800px) {
+  .quoteGen .quoteConfigGrid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
 .quoteGen .quoteMainGrid {
   display: flex;
   flex-direction: column;

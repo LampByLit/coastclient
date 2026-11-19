@@ -53,6 +53,7 @@ async function stopsWithCities(stops) {
 }
 
 export default function QuoteGenerator() {
+  const [phase, setPhase] = useState('wizard')
   const [wizardStep, setWizardStep] = useState('contact')
   const [submitted, setSubmitted] = useState(false)
   const [previewBody, setPreviewBody] = useState('')
@@ -71,9 +72,9 @@ export default function QuoteGenerator() {
   const web3formsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY?.trim()
   const wizardStepNumber = WIZARD_STEPS[wizardStep] || 1
 
-  const skipTo = (step) => {
+  const openConfig = () => {
     setError('')
-    setWizardStep(step)
+    setPhase('config')
   }
 
   const updateAddress = (id, address, lat, lon, city) => {
@@ -152,12 +153,7 @@ export default function QuoteGenerator() {
     else if (wizardStep === 'addresses') setWizardStep('movers')
   }
 
-  const submitRequest = async ({ requireAddress = true } = {}) => {
-    const filled = destinations.filter((stop) => stop.address.trim())
-    if (requireAddress && filled.length === 0) {
-      setError('Please enter at least one address.')
-      return
-    }
+  const submitRequest = async () => {
     if (honeypot.trim()) return
 
     setSending(true)
@@ -230,6 +226,166 @@ export default function QuoteGenerator() {
     )
   }
 
+  if (phase === 'config') {
+    return (
+      <div className="quoteGen">
+        <div className="quoteApp">
+          <header className="quoteAppBar">
+            <h2 className="quoteAppTitle">Your move</h2>
+            <div className="quoteAppBarActions">
+              <button type="button" className="quoteBtnBar" onClick={() => setPhase('wizard')}>
+                Back
+              </button>
+              <button type="button" className="quoteBtnBar" onClick={submitRequest} disabled={sending}>
+                {sending ? 'Sending…' : 'Book Your Move'}
+              </button>
+            </div>
+          </header>
+          <main className="quoteMain">
+            <label className="quoteModalHoneypot" htmlFor="book-move-hp-config" aria-hidden="true">
+              Company
+              <input
+                id="book-move-hp-config"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+              />
+            </label>
+            {error && <p className="quoteWizardError">{error}</p>}
+            <div className="quoteConfigGrid">
+              <section className="quoteCard">
+                <h3 className="quoteCardTitle">Contact</h3>
+                <div className="quoteModalFields">
+                  <label className="quoteModalLabel">
+                    Name
+                    <input
+                      type="text"
+                      className="quoteInput"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      autoComplete="name"
+                    />
+                  </label>
+                  <label className="quoteModalLabel">
+                    Phone
+                    <input
+                      type="tel"
+                      className="quoteInput"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      autoComplete="tel"
+                    />
+                  </label>
+                  <label className="quoteModalLabel">
+                    Email
+                    <input
+                      type="email"
+                      className="quoteInput"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                    />
+                  </label>
+                  <label className="quoteModalLabel">
+                    Move date
+                    <input
+                      type="date"
+                      className="quoteInput quoteWizardDate"
+                      value={moveDate}
+                      onChange={(e) => setMoveDate(e.target.value)}
+                      aria-label="Move date"
+                    />
+                  </label>
+                </div>
+              </section>
+              <section className="quoteCard">
+                <h3 className="quoteCardTitle">Crew</h3>
+                <p className="quoteCardHint">
+                  Starts at {DEFAULT_MOVERS} movers. One mover can be booked. Minimum {MIN_HOURS_PER_MOVER} hours.
+                </p>
+                <div className="quoteModalFields">
+                  <label className="quoteModalLabel">
+                    Movers
+                    <input
+                      type="number"
+                      className="quoteInput quoteWizardNumber"
+                      min={MIN_MOVERS}
+                      step={1}
+                      value={moverCount}
+                      onChange={(e) => setMoverCount(e.target.value)}
+                      aria-label="Number of movers"
+                    />
+                  </label>
+                  <label className="quoteModalLabel">
+                    Hours
+                    <input
+                      type="number"
+                      className="quoteInput quoteWizardNumber"
+                      min={MIN_HOURS_PER_MOVER}
+                      step={1}
+                      value={hours}
+                      onChange={(e) => setHours(e.target.value)}
+                      aria-label="Hours"
+                    />
+                  </label>
+                </div>
+              </section>
+              <section className="quoteCard quoteConfigStops">
+                <h3 className="quoteCardTitle">Stops</h3>
+                <ul className="quoteStopList">
+                  {destinations.map((stop, index) => (
+                    <li key={stop.id} className="quoteStopRow">
+                      <span className="quoteStopLabel">
+                        {index === 0
+                          ? 'Origin'
+                          : index === destinations.length - 1
+                            ? 'Destination'
+                            : `Stop ${index + 1}`}
+                      </span>
+                      <AddressInput
+                        value={stop.address}
+                        onChange={(address, lat, lon, city) => updateAddress(stop.id, address, lat, lon, city)}
+                        placeholder="Start typing address…"
+                      />
+                      <button
+                        type="button"
+                        className="quoteBtnIcon"
+                        onClick={() => removeStop(stop.id)}
+                        disabled={destinations.length <= 1}
+                        aria-label="Remove stop"
+                      >
+                        −
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <button type="button" className="quoteBtnSecondary" onClick={addStop}>
+                  + Add stop
+                </button>
+                <div className="quoteMoveDetails">
+                  <label className="quoteMoveDetailsLabel" htmlFor="config-move-details">
+                    Move details
+                  </label>
+                  <textarea
+                    id="config-move-details"
+                    className="quoteInput quoteTextarea"
+                    placeholder="Please describe your move"
+                    value={moveDetails}
+                    onChange={(e) => setMoveDetails(e.target.value)}
+                    rows={4}
+                    aria-label="Please describe your move"
+                  />
+                </div>
+              </section>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="quoteGen">
       <div className="quoteWizard">
@@ -293,7 +449,7 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteWizardBtnPrimary" onClick={goNextFromContact}>
                 Next
               </button>
-              <button type="button" className="quoteWizardLink" onClick={() => skipTo('date')}>
+              <button type="button" className="quoteWizardLink" onClick={openConfig}>
                 Skip for now
               </button>
             </div>
@@ -320,7 +476,7 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteWizardBtnPrimary" onClick={goNextFromDate}>
                 Next
               </button>
-              <button type="button" className="quoteWizardLink" onClick={() => skipTo('movers')}>
+              <button type="button" className="quoteWizardLink" onClick={openConfig}>
                 Skip for now
               </button>
             </div>
@@ -368,7 +524,7 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteWizardBtnPrimary" onClick={goNextFromMovers}>
                 Next
               </button>
-              <button type="button" className="quoteWizardLink" onClick={() => skipTo('addresses')}>
+              <button type="button" className="quoteWizardLink" onClick={openConfig}>
                 Skip for now
               </button>
             </div>
@@ -428,20 +584,10 @@ export default function QuoteGenerator() {
               <button type="button" className="quoteWizardLink quoteWizardBack" onClick={wizardBack}>
                 Back
               </button>
-              <button
-                type="button"
-                className="quoteWizardBtnPrimary"
-                onClick={() => submitRequest()}
-                disabled={sending}
-              >
-                {sending ? 'Sending…' : 'Submit'}
+              <button type="button" className="quoteWizardBtnPrimary" onClick={openConfig}>
+                Continue
               </button>
-              <button
-                type="button"
-                className="quoteWizardLink"
-                onClick={() => submitRequest({ requireAddress: false })}
-                disabled={sending}
-              >
+              <button type="button" className="quoteWizardLink" onClick={openConfig}>
                 Skip for now
               </button>
             </div>
