@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DEFAULT_MOVERS, LABOR_RATE_PER_HOUR, MIN_HOURS_PER_MOVER, MIN_MOVERS } from './data/pricing'
+import { DEFAULT_MOVERS, MIN_HOURS_PER_MOVER, MIN_MOVERS } from './data/pricing'
 import { geocodeAddress } from './api/geoapifyClient'
 import AddressInput from './components/AddressInput'
 import { buildBookingMessage } from './buildBookMovePlainText'
@@ -261,15 +261,6 @@ export default function QuoteGenerator() {
     )
   }
 
-  const moverCountNum = Number(moverCount)
-  const hoursNum = Number(hours)
-  const laborReady =
-    Number.isFinite(moverCountNum) &&
-    moverCountNum >= MIN_MOVERS &&
-    Number.isFinite(hoursNum) &&
-    hoursNum >= MIN_HOURS_PER_MOVER
-  const laborCost = laborReady ? moverCountNum * hoursNum * LABOR_RATE_PER_HOUR : 0
-
   if (phase === 'config') {
     return (
       <div className="quoteGen">
@@ -309,7 +300,6 @@ export default function QuoteGenerator() {
             {error && <p className="quoteWizardError no-print">{error}</p>}
             <div className="printItemization" aria-hidden="true">
               <p className="printBrand">Coast Team Moving</p>
-              <h1 className="printDocTitle">Moving quote</h1>
               {moveDate && (
                 <>
                   <h2 className="printItemizationTitle">Date</h2>
@@ -337,17 +327,8 @@ export default function QuoteGenerator() {
                   <p className="printDetail printMoveDetailsBody">{moveDetails.trim()}</p>
                 </>
               )}
-              <h2 className="printItemizationTitle">Labor</h2>
-              <p className="printDetail">
-                {laborReady
-                  ? `${moverCountNum} × ${hoursNum} hrs × $${LABOR_RATE_PER_HOUR}/hr = $${laborCost.toFixed(2)}`
-                  : '—'}
-              </p>
-              <p className="printDetail">Labor does not include driving time.</p>
-              <h2 className="printItemizationTitle">Total</h2>
-              <p className="printDetail">${laborCost.toFixed(2)}</p>
             </div>
-            <div className="quoteMainGrid no-print">
+            <div className="quoteMainGrid quoteConfigLayout no-print">
               <section className="quoteCard quoteMainLeft">
                 <h3 className="quoteCardTitle">Stops</h3>
                 <div className="quoteOptionalSection quoteOptionalSectionTop">
@@ -409,28 +390,6 @@ export default function QuoteGenerator() {
                   />
                 </div>
               </section>
-              <section className="quoteCard quoteQuoteCard quoteMainCenter" id="quote-card">
-                <h3 className="quoteCardTitle">Quote</h3>
-                <p className="quoteCardHint">Labor does not include driving time.</p>
-                <dl className="quoteBreakdown">
-                  <div className="quoteRow">
-                    <dt>Labor</dt>
-                    <dd>
-                      {laborReady
-                        ? `${moverCountNum} × ${hoursNum} hrs × $${LABOR_RATE_PER_HOUR}/hr`
-                        : '—'}
-                    </dd>
-                  </div>
-                  <div className="quoteRow">
-                    <dt>Labor total</dt>
-                    <dd>{laborReady ? `$${laborCost.toFixed(2)}` : '—'}</dd>
-                  </div>
-                  <div className="quoteRow quoteTotal">
-                    <dt>Total</dt>
-                    <dd>{laborReady ? `$${laborCost.toFixed(2)}` : '—'}</dd>
-                  </div>
-                </dl>
-              </section>
               <section className="quoteCard quoteMainRight">
                 <h3 className="quoteCardTitle">Contact</h3>
                 <div className="quoteModalFields">
@@ -469,7 +428,7 @@ export default function QuoteGenerator() {
                   Crew
                 </h3>
                 <p className="quoteCardHint">
-                  ${LABOR_RATE_PER_HOUR}/hr per mover. One mover can be booked. Minimum {MIN_HOURS_PER_MOVER} hours.
+                  One mover can be booked. Minimum {MIN_HOURS_PER_MOVER} hours.
                 </p>
                 <div className="quoteModalFields">
                   <label className="quoteModalLabel">

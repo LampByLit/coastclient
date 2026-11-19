@@ -4,8 +4,6 @@
  * Nothing in this text is shown to the customer.
  */
 
-import { LABOR_RATE_PER_HOUR } from './data/pricing'
-
 const PROVINCE = /^(AB|BC|MB|NB|NL|NS|NT|NU|ON|PE|QC|SK|YT)(\b|\s)/i
 
 function formatMoveDate(iso) {
@@ -53,6 +51,17 @@ export function firstCity(destinations) {
   return ''
 }
 
+function addressLines(addresses) {
+  if (addresses.length === 0) return []
+  const lines = ['', 'From:', addresses[0]]
+  if (addresses.length === 1) return lines
+  for (let i = 1; i < addresses.length - 1; i += 1) {
+    lines.push('', addresses[i])
+  }
+  lines.push('', 'To:', addresses[addresses.length - 1])
+  return lines
+}
+
 function formatHours(hours) {
   const n = Number(hours)
   if (!Number.isFinite(n)) return '2'
@@ -76,7 +85,6 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
 
   const men = Math.max(1, Number(moverCount) || 1)
   const shownHours = Number.isFinite(Number(hours)) ? Number(hours) : Number(formatHours(hours))
-  const quotePrice = men * shownHours * LABOR_RATE_PER_HOUR
 
   const lines = [
     title,
@@ -84,12 +92,10 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
     `${men} man`,
     `${formatHours(shownHours)} hrs`,
     ...(contactLines.length ? ['', ...contactLines] : []),
-    ...(addresses.length ? ['', ...addresses] : []),
+    ...addressLines(addresses),
     '',
     'Move Details:',
     details,
-    '',
-    `Quote Price: $${quotePrice.toFixed(2)}`,
   ]
 
   return { subject: title, body: lines.join('\n') }
