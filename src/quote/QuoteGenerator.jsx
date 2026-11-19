@@ -62,8 +62,8 @@ export default function QuoteGenerator() {
   const [email, setEmail] = useState('')
   const [honeypot, setHoneypot] = useState('')
   const [moveDate, setMoveDate] = useState('')
-  const [moverCount, setMoverCount] = useState(DEFAULT_MOVERS)
-  const [hours, setHours] = useState(MIN_HOURS_PER_MOVER)
+  const [moverCount, setMoverCount] = useState('')
+  const [hours, setHours] = useState('')
   const [destinations, setDestinations] = useState(() => emptyStops())
   const [moveDetails, setMoveDetails] = useState('')
   const [error, setError] = useState('')
@@ -75,6 +75,24 @@ export default function QuoteGenerator() {
   const openConfig = () => {
     setError('')
     setPhase('config')
+  }
+
+  const restartWizard = () => {
+    setPhase('wizard')
+    setWizardStep('contact')
+    setSubmitted(false)
+    setPreviewBody('')
+    setName('')
+    setPhone('')
+    setEmail('')
+    setHoneypot('')
+    setMoveDate('')
+    setMoverCount('')
+    setHours('')
+    setDestinations(emptyStops())
+    setMoveDetails('')
+    setError('')
+    setSending(false)
   }
 
   const updateAddress = (id, address, lat, lon, city) => {
@@ -101,9 +119,21 @@ export default function QuoteGenerator() {
   }
 
   const removeStop = (id) => {
-    if (destinations.length <= 1) return
+    if (destinations.length <= 2) return
     setDestinations((prev) => prev.filter((stop) => stop.id !== id))
   }
+
+  const missingFields = []
+  if (!name.trim()) missingFields.push('name')
+  if (phoneDigits(phone).length !== 10) missingFields.push('phone')
+  if (!isValidEmail(email)) missingFields.push('email')
+  if (!moveDate) missingFields.push('move date')
+  if (!Number.isFinite(Number(moverCount)) || Number(moverCount) < MIN_MOVERS) missingFields.push('movers')
+  if (!Number.isFinite(Number(hours)) || Number(hours) < MIN_HOURS_PER_MOVER) {
+    missingFields.push(`at least ${MIN_HOURS_PER_MOVER} hours`)
+  }
+  if (!destinations.some((stop) => stop.address.trim())) missingFields.push('an address')
+  const canBook = missingFields.length === 0
 
   const goNextFromContact = () => {
     if (!name.trim()) {
@@ -128,6 +158,8 @@ export default function QuoteGenerator() {
       return
     }
     setError('')
+    if (moverCount === '') setMoverCount(String(DEFAULT_MOVERS))
+    if (hours === '') setHours(String(MIN_HOURS_PER_MOVER))
     setWizardStep('movers')
   }
 
@@ -154,7 +186,7 @@ export default function QuoteGenerator() {
   }
 
   const submitRequest = async () => {
-    if (honeypot.trim()) return
+    if (!canBook || honeypot.trim()) return
 
     setSending(true)
     setError('')
@@ -226,18 +258,39 @@ export default function QuoteGenerator() {
     )
   }
 
+  const printText = buildBookingMessage({
+    name,
+    phone,
+    email,
+    moveDate,
+    moverCount,
+    hours,
+    destinations,
+    moveDetails,
+  }).body
+
   if (phase === 'config') {
     return (
       <div className="quoteGen">
         <div className="quoteApp">
-          <header className="quoteAppBar">
+          <header className="quoteAppBar no-print">
             <h2 className="quoteAppTitle">Your move</h2>
-            <div className="quoteAppBarActions">
-              <button type="button" className="quoteBtnBar" onClick={() => setPhase('wizard')}>
-                Back
-              </button>
-              <button type="button" className="quoteBtnBar" onClick={submitRequest} disabled={sending}>
+            <div className="quoteAppBarActions no-print">
+              <button
+                type="button"
+                className="quoteBtnBar"
+                onClick={submitRequest}
+                disabled={!canBook || sending}
+                title={canBook ? 'Send this move to our team' : `Still needed: ${missingFields.join(', ')}`}
+                aria-label="Book your move"
+              >
                 {sending ? 'Sending…' : 'Book Your Move'}
+              </button>
+              <button type="button" className="quoteBtnBar" onClick={() => window.print()} aria-label="Print move">
+                Print
+              </button>
+              <button type="button" className="quoteBtnBar" onClick={restartWizard}>
+                Start over
               </button>
             </div>
           </header>
@@ -253,9 +306,70 @@ export default function QuoteGenerator() {
                 onChange={(e) => setHoneypot(e.target.value)}
               />
             </label>
-            {error && <p className="quoteWizardError">{error}</p>}
-            <div className="quoteConfigGrid">
-              <section className="quoteCard">
+            {error && <p className="quoteWizardError no-print">{error}</p>}
+            <pre className="printItemization printMoveText">{printText}</pre>
+            <div className="quoteMainGrid quoteConfigLayout no-print">
+              <section className="quoteCard quoteMainLeft">
+                <h3 className="quoteCardTitle">Stops</h3>
+                <div className="quoteOptionalSection quoteOptionalSectionTop">
+                  <label className="quoteModalLabel">
+                    Move date
+                    <input
+                      type="date"
+                      className="quoteInput quoteWizardDate"
+                      value={moveDate}
+                      onChange={(e) => setMoveDate(e.target.value)}
+                      aria-label="Move date"
+                    />
+                  </label>
+                </div>
+                <p className="quoteCardHint">Add every stop for your move.</p>
+                <ul className="quoteStopList">
+                  {destinations.map((stop, index) => (
+                    <li key={stop.id} className="quoteStopRow">
+                      <span className="quoteStopLabel">
+                        {index === 0
+                          ? 'Origin'
+                          : index === destinations.length - 1
+                            ? 'Destination'
+                            : `Stop ${index + 1}`}
+                      </span>
+                      <AddressInput
+                        value={stop.address}
+                        onChange={(address, lat, lon, city) => updateAddress(stop.id, address, lat, lon, city)}
+                        placeholder="Start typing address…"
+                      />
+                      <button
+                        type="button"
+                        className="quoteBtnIcon"
+                        onClick={() => removeStop(stop.id)}
+                        disabled={destinations.length <= 2}
+                        aria-label="Remove stop"
+                      >
+                        −
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <button type="button" className="quoteBtnSecondary" onClick={addStop}>
+                  + Add stop
+                </button>
+                <div className="quoteMoveDetails">
+                  <label className="quoteMoveDetailsLabel" htmlFor="config-move-details">
+                    Move details
+                  </label>
+                  <textarea
+                    id="config-move-details"
+                    className="quoteInput quoteTextarea"
+                    placeholder="Please describe your move"
+                    value={moveDetails}
+                    onChange={(e) => setMoveDetails(e.target.value)}
+                    rows={4}
+                    aria-label="Please describe your move"
+                  />
+                </div>
+              </section>
+              <section className="quoteCard quoteMainRight">
                 <h3 className="quoteCardTitle">Contact</h3>
                 <div className="quoteModalFields">
                   <label className="quoteModalLabel">
@@ -288,22 +402,12 @@ export default function QuoteGenerator() {
                       autoComplete="email"
                     />
                   </label>
-                  <label className="quoteModalLabel">
-                    Move date
-                    <input
-                      type="date"
-                      className="quoteInput quoteWizardDate"
-                      value={moveDate}
-                      onChange={(e) => setMoveDate(e.target.value)}
-                      aria-label="Move date"
-                    />
-                  </label>
                 </div>
-              </section>
-              <section className="quoteCard">
-                <h3 className="quoteCardTitle">Crew</h3>
+                <h3 className="quoteCardTitle" style={{ marginTop: 22 }}>
+                  Crew
+                </h3>
                 <p className="quoteCardHint">
-                  Starts at {DEFAULT_MOVERS} movers. One mover can be booked. Minimum {MIN_HOURS_PER_MOVER} hours.
+                  One mover can be booked. Minimum {MIN_HOURS_PER_MOVER} hours.
                 </p>
                 <div className="quoteModalFields">
                   <label className="quoteModalLabel">
@@ -330,53 +434,6 @@ export default function QuoteGenerator() {
                       aria-label="Hours"
                     />
                   </label>
-                </div>
-              </section>
-              <section className="quoteCard quoteConfigStops">
-                <h3 className="quoteCardTitle">Stops</h3>
-                <ul className="quoteStopList">
-                  {destinations.map((stop, index) => (
-                    <li key={stop.id} className="quoteStopRow">
-                      <span className="quoteStopLabel">
-                        {index === 0
-                          ? 'Origin'
-                          : index === destinations.length - 1
-                            ? 'Destination'
-                            : `Stop ${index + 1}`}
-                      </span>
-                      <AddressInput
-                        value={stop.address}
-                        onChange={(address, lat, lon, city) => updateAddress(stop.id, address, lat, lon, city)}
-                        placeholder="Start typing address…"
-                      />
-                      <button
-                        type="button"
-                        className="quoteBtnIcon"
-                        onClick={() => removeStop(stop.id)}
-                        disabled={destinations.length <= 1}
-                        aria-label="Remove stop"
-                      >
-                        −
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <button type="button" className="quoteBtnSecondary" onClick={addStop}>
-                  + Add stop
-                </button>
-                <div className="quoteMoveDetails">
-                  <label className="quoteMoveDetailsLabel" htmlFor="config-move-details">
-                    Move details
-                  </label>
-                  <textarea
-                    id="config-move-details"
-                    className="quoteInput quoteTextarea"
-                    placeholder="Please describe your move"
-                    value={moveDetails}
-                    onChange={(e) => setMoveDetails(e.target.value)}
-                    rows={4}
-                    aria-label="Please describe your move"
-                  />
                 </div>
               </section>
             </div>
@@ -554,7 +611,7 @@ export default function QuoteGenerator() {
                     type="button"
                     className="quoteBtnIcon"
                     onClick={() => removeStop(stop.id)}
-                    disabled={destinations.length <= 1}
+                    disabled={destinations.length <= 2}
                     aria-label="Remove stop"
                   >
                     −

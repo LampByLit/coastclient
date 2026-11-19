@@ -98,6 +98,10 @@
     align-items: start;
   }
 
+  .quoteGen .quoteConfigLayout {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+
   .quoteGen .quoteMainLeft {
     order: 1;
   }
@@ -521,6 +525,13 @@
   color: #000;
 }
 
+.quoteGen .printMoveText {
+  white-space: pre-wrap;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
 .quoteGen .printBrand {
   margin: 0 0 4px;
   font-size: 0.7rem;
@@ -922,6 +933,10 @@
     position: static;
     width: 100%;
     max-width: none;
+  }
+
+  .quoteGen .quoteConfigLayout {
+    grid-template-columns: 1.15fr 0.85fr;
   }
 
   .quoteGen .quoteCard {
