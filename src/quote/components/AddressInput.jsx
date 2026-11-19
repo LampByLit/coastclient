@@ -4,7 +4,7 @@ import './AddressInput.css'
 
 const DEBOUNCE_MS = 350
 
-export default function AddressInput({ value, onChange, placeholder = 'Address' }) {
+export default function AddressInput({ id, value, onChange, placeholder = 'Address' }) {
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
@@ -59,29 +59,30 @@ export default function AddressInput({ value, onChange, placeholder = 'Address' 
   const handleChange = (e) => {
     justSelectedRef.current = false
     const v = e.target.value
-    if (typeof onChange === 'function') {
-      if (v === '') {
-        onChange('')
-      } else {
-        onChange(v)
-      }
-    }
+    onChange(v, null, null, '')
   }
 
   const handleBlur = () => {
+    if (justSelectedRef.current) return
     if (!value || value.trim().length < 3) return
-    geocodeAddress(value.trim())
+    const typed = value.trim()
+    geocodeAddress(typed)
       .then((coords) => {
         if (coords && coords.lat != null && coords.lon != null) {
-          onChange(value.trim(), coords.lat, coords.lon, coords.city || '')
+          onChange(typed, coords.lat, coords.lon, coords.city || '')
         }
       })
       .catch(() => {})
   }
 
   return (
-    <div className="quoteAddressInputWrap" ref={containerRef}>
+    <div
+      className={`quoteAddressInputWrap${open ? ' quoteAddressInputWrapOpen' : ''}`}
+      ref={containerRef}
+    >
       <input
+        id={id}
+        name={id}
         type="text"
         className="quoteInput"
         placeholder={placeholder}
@@ -89,14 +90,22 @@ export default function AddressInput({ value, onChange, placeholder = 'Address' 
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={() => value && suggestions.length > 0 && setOpen(true)}
-        autoComplete="off"
+        autoComplete="one-time-code"
+        autoCorrect="off"
+        spellCheck={false}
+        aria-autocomplete="list"
       />
       {loading && <span className="quoteAddressInputSpinner" aria-hidden />}
       {open && suggestions.length > 0 && (
         <ul className="quoteAddressInputList">
           {suggestions.map((s, i) => (
             <li key={i}>
-              <button type="button" className="quoteAddressInputItem" onClick={() => handleSelect(s)}>
+              <button
+                type="button"
+                className="quoteAddressInputItem"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => handleSelect(s)}
+              >
                 {s.formatted}
               </button>
             </li>

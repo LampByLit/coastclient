@@ -374,6 +374,7 @@ export default function QuoteGenerator() {
                             : `Stop ${index + 1}`}
                       </span>
                       <AddressInput
+                        id={`config-stop-${stop.id}`}
                         value={stop.address}
                         onChange={(address, lat, lon, city) => updateAddress(stop.id, address, lat, lon, city)}
                         placeholder="Start typing address…"
@@ -664,6 +665,7 @@ export default function QuoteGenerator() {
                         : `Stop ${index + 1}`}
                   </span>
                   <AddressInput
+                    id={`wizard-stop-${stop.id}`}
                     value={stop.address}
                     onChange={(address, lat, lon, city) => updateAddress(stop.id, address, lat, lon, city)}
                     placeholder="Start typing address…"

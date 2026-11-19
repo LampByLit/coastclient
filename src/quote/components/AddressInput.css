@@ -1,6 +1,11 @@
 .quoteAddressInputWrap {
   flex: 1;
   position: relative;
+  min-width: 0;
+}
+
+.quoteAddressInputWrapOpen {
+  z-index: 30;
 }
 
 .quoteAddressInputWrap .quoteInput {
@@ -38,7 +43,7 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10;
+  z-index: 31;
   max-height: 200px;
   overflow-y: auto;
 }
