@@ -7,8 +7,10 @@ import './QuoteGenerator.css'
 
 const WIZARD_STEPS = { contact: 1, date: 2, movers: 3, addresses: 4 }
 const TOTAL_STEPS = 4
-const THANK_YOU =
-  'Your request has been submitted and a member of our team will reach out to you very shortly. Have a great day and thank you for choosing Coast Team to serve you!'
+const THANK_YOU = [
+  'Your request has been submitted and a member of our team will reach out to you very shortly.',
+  'Have a great day and thank you for choosing Coast Team to serve you!',
+]
 
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim())
@@ -80,24 +82,6 @@ export default function QuoteGenerator() {
   const openConfig = () => {
     setError('')
     setPhase('config')
-  }
-
-  const restartWizard = () => {
-    setPhase('wizard')
-    setWizardStep('contact')
-    setSubmitted(false)
-    setPreviewBody('')
-    setName('')
-    setPhone('')
-    setEmail('')
-    setHoneypot('')
-    setMoveDate('')
-    setMoverCount(DEFAULT_MOVERS)
-    setHours(MIN_HOURS_PER_MOVER)
-    setDestinations(emptyStops())
-    setMoveDetails('')
-    setError('')
-    setSending(false)
   }
 
   const updateAddress = (id, address, lat, lon, city) => {
@@ -249,7 +233,11 @@ export default function QuoteGenerator() {
     return (
       <div className="quoteGen">
         <div className="quoteWizard">
-          <p className="quoteWizardQuestion">{THANK_YOU}</p>
+          {THANK_YOU.map((sentence) => (
+            <p key={sentence} className="quoteWizardQuestion">
+              {sentence}
+            </p>
+          ))}
           {previewBody && (
             <>
               <p className="quoteOptionalHint">Local preview only. This was not emailed.</p>
@@ -272,16 +260,10 @@ export default function QuoteGenerator() {
                 className="quoteBtnBar"
                 onClick={submitRequest}
                 disabled={!canBook || sending}
-                title={canBook ? 'Send this move to our team' : `Still needed: ${missingFields.join(', ')}`}
-                aria-label="Book your move"
+                title={canBook ? 'Send this request' : `Still needed: ${missingFields.join(', ')}`}
+                aria-label="Confirm"
               >
-                {sending ? 'Sending…' : 'Book Your Move'}
-              </button>
-              <button type="button" className="quoteBtnBar" onClick={() => window.print()} aria-label="Print move">
-                Print
-              </button>
-              <button type="button" className="quoteBtnBar" onClick={restartWizard}>
-                Start over
+                {sending ? 'Sending…' : 'CONFIRM'}
               </button>
             </div>
           </header>
@@ -298,36 +280,6 @@ export default function QuoteGenerator() {
               />
             </label>
             {error && <p className="quoteWizardError no-print">{error}</p>}
-            <div className="printItemization" aria-hidden="true">
-              <p className="printBrand">Coast Team Moving</p>
-              {moveDate && (
-                <>
-                  <h2 className="printItemizationTitle">Date</h2>
-                  <p className="printDetail">{moveDate}</p>
-                </>
-              )}
-              <h2 className="printItemizationTitle">Route</h2>
-              <ul className="printStops">
-                {destinations.map((stop, index) => (
-                  <li key={stop.id} className="printStopRow">
-                    <span className="printStopLabel">
-                      {index === 0
-                        ? 'Origin'
-                        : index === destinations.length - 1
-                          ? 'Destination'
-                          : `Stop ${index + 1}`}
-                    </span>
-                    <span>{stop.address || '—'}</span>
-                  </li>
-                ))}
-              </ul>
-              {moveDetails.trim() && (
-                <>
-                  <h2 className="printItemizationTitle">Move details</h2>
-                  <p className="printDetail printMoveDetailsBody">{moveDetails.trim()}</p>
-                </>
-              )}
-            </div>
             <div className="quoteMainGrid quoteConfigLayout no-print">
               <section className="quoteCard quoteMainLeft">
                 <h3 className="quoteCardTitle">Stops</h3>
