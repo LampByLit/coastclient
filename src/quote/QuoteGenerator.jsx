@@ -152,9 +152,9 @@ export default function QuoteGenerator() {
     else if (wizardStep === 'addresses') setWizardStep('movers')
   }
 
-  const submitRequest = async () => {
+  const submitRequest = async ({ requireAddress = true } = {}) => {
     const filled = destinations.filter((stop) => stop.address.trim())
-    if (filled.length === 0) {
+    if (requireAddress && filled.length === 0) {
       setError('Please enter at least one address.')
       return
     }
@@ -448,10 +448,18 @@ export default function QuoteGenerator() {
               <button
                 type="button"
                 className="quoteWizardBtnPrimary"
-                onClick={submitRequest}
+                onClick={() => submitRequest()}
                 disabled={sending}
               >
                 {sending ? 'Sending…' : 'Submit'}
+              </button>
+              <button
+                type="button"
+                className="quoteWizardLink"
+                onClick={() => submitRequest({ requireAddress: false })}
+                disabled={sending}
+              >
+                Skip for now
               </button>
             </div>
           </>

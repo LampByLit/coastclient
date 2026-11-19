@@ -61,7 +61,7 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
   const fullName = String(name || '').trim()
   const lastName = lastNameFrom(fullName)
   const city = firstCity(destinations)
-  const title = `W - ${lastName} - MOVE - ${city}`
+  const title = city ? `W - ${lastName} - MOVE - ${city}` : `W - ${lastName} - MOVE`
   const addresses = (destinations || [])
     .map((stop) => (typeof stop.address === 'string' ? stop.address.trim() : ''))
     .filter(Boolean)
@@ -70,8 +70,7 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
   const lines = [
     title,
     '',
-    ...addresses,
-    '',
+    ...(addresses.length ? [...addresses, ''] : []),
     `${Math.max(1, Number(moverCount) || 1)} man`,
     `${formatHours(hours)} hrs`,
     '',
