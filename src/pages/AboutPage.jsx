@@ -2,41 +2,35 @@ const GOOGLE_REVIEWS_URL = 'https://share.google/uKt4Jl6PG0gMrYDou'
 
 const REVIEWS = [
   {
-    url: 'https://share.google/Im5vCPqhOp3eWY5GS',
+    url: 'https://share.google/pI06euO7Qh4cOOisB',
     text: [
-      'We had such an incredible experience with Coast Movers, and Matt was absolutely fantastic to work with.',
-      'From the moment he arrived, he brought such a positive, calm energy to what could have been a really stressful day. Moving is never easy, especially after relocating across provinces, but Matt made the entire unloading process feel smooth and manageable. He was professional, efficient, and genuinely kind.',
-      'What really stood out to me was how much he went above and beyond. He took the time to share recommendations for estate sales and thrift stores around the Island and gave us the warmest welcome to “paradise.” It didn’t feel transactional, it felt personal and thoughtful.',
-      'He unloaded everything in about half the time we expected, which was so impressive. Every item was handled with care. Not a single scratch or broken piece. That level of attention and respect for our belongings meant a lot.',
-      'I would 100% recommend Matt to any of my family or friends for moving help. Truly a 10 out of 10 experience.',
+      'Excellent service. Arrived on time. Moved the furniture without difficulty. Matt and Cameron were organized and very helpful. Would highly recommend them.',
     ],
   },
   {
-    url: 'https://share.google/8V14puM9ra5dS8TQq',
+    url: 'https://share.google/h4cPYKmrwAa35t88C',
     text: [
-      'We had a great experience with Coast team moving help team for unloading our U-Haul box. Matt was professional, efficient, and handled our items with care. Everything was unloaded quickly and organized exactly where we needed it.',
-      'Moving can be incredibly stressful, especially when you’re new to the area, but they made the process smooth and worry-free. They were punctual, communicative, and very respectful throughout the entire job.',
-      'We truly appreciated their positive attitude and willingness to go the extra mile. I would absolutely recommend them to anyone needing help with unloading or moving services.',
-      'Thank you again for making our move so much easier!',
+      'Great work by Matt and his team. Thank you for a smooth, efficient move!',
     ],
   },
   {
-    url: 'https://share.google/pul9Ge9DdQyCu7ViH',
+    url: 'https://share.google/Hp6Y1sn9G2RrZfhbm',
     text: [
-      'We hired Matt to help us move into our new home and he and his colleague were on time, energetic, strong, careful and efficient. They took very good care when handling our things.',
-      'Also, their pleasant manners made them comfortable to be around. I highly recommend this team.',
+      'When i first met Matt, he showed kindness and wanted to ensure the piece of furniture that someone had purchased from me was going to make it to its new home without the glasses being shattered ... that made me think " i might need his services" it happen yesterday ...Matt takes pride in serving his clients with joy and kindness and making sure the job is well done. Also i notice how well and clean his vehicule is kept. Thank you Matt for your professional service!!',
     ],
   },
   {
-    url: 'https://share.google/oP0vGHlOe1wlK1Q0b',
+    url: 'https://share.google/gRXHhtKk4MCBbkfwH',
     text: [
-      'These guys made Ann’s move to Port Alberni Senior Complex so easy & stress free. Both Matt & Ryan were exceptional team of hard working movers. That’s where this team excels. So if your planing a move, I would not hesitate to call these guys. Also not a single item was broken. Now That’s Amazing. Thank You Matt & Ryan.',
+      'Matt and his team were great. They worked hard, were efficient and had great attitudes. I would definitely hire them again.',
     ],
   },
   {
-    url: 'https://share.google/ZQe0GCLwA3y78MBNe',
+    url: 'https://share.google/QoCu0275xhnRSl4Cu',
     text: [
-      'From the very beginning, Matt was super kind, communicative, and accommodating of adjustments to our timeline. I wasn\'t near as prepared I should\'ve been, yet somehow it all got efficiently loaded into the truck within the estimated time he gave. I\'ve hired movers in the island numerous times, but Matt & his helper were the best by far. Highly recommend!!',
+      'Matt and Cameron were absolutely amazing to work with! Their communication was thorough and transparent, they worked incredibly hard, and they treated every item with the utmost care.',
+      'If you want peace of mind knowing your belongings are in good hands, these are your guys! I felt completely taken care of throughout the process.',
+      'I highly recommend these professionals!',
     ],
   },
 ]
