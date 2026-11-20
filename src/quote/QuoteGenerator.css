@@ -210,6 +210,35 @@
   color: rgba(0, 0, 0, 0.55);
 }
 
+.quoteGen .quoteMoveDetailsMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.quoteGen .quoteMoveDetailsField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.quoteGen .quoteMoveDetailsFieldLabel {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.quoteGen .quoteMoveDetailsSelect {
+  width: 100%;
+  max-width: 100%;
+  font-weight: 600;
+}
+
+.quoteGen .quoteMoveDetailsApartment {
+  margin: 0;
+}
+
 .quoteGen .printMoveDetailsBody {
   white-space: pre-wrap;
 }

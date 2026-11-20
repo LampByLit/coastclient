@@ -68,7 +68,32 @@ function formatHours(hours) {
   return Number.isInteger(n) ? String(n) : String(n)
 }
 
-export function buildBookingMessage({ name, phone, email, moveDate, moverCount, hours, destinations, moveDetails }) {
+function moveDetailsLines({ squareFootageLabel, isApartment, moveDetails }) {
+  const sqFt = String(squareFootageLabel || '').trim()
+  const notes = typeof moveDetails === 'string' ? moveDetails.trim() : ''
+  const lines = [
+    'Move Details:',
+    `Square footage: ${sqFt || 'Not specified'}`,
+    `Apartment: ${isApartment ? 'Yes' : 'No'}`,
+  ]
+  if (notes) {
+    lines.push('', notes)
+  }
+  return lines
+}
+
+export function buildBookingMessage({
+  name,
+  phone,
+  email,
+  moveDate,
+  moverCount,
+  hours,
+  destinations,
+  moveDetails,
+  squareFootageLabel,
+  isApartment,
+}) {
   const fullName = String(name || '').trim()
   const lastName = lastNameFrom(fullName)
   const city = firstCity(destinations)
@@ -76,7 +101,6 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
   const addresses = (destinations || [])
     .map((stop) => (typeof stop.address === 'string' ? stop.address.trim() : ''))
     .filter(Boolean)
-  const details = typeof moveDetails === 'string' ? moveDetails.trim() : ''
   const phoneText = formatBookingPhone(phone)
   const emailText = String(email || '').trim()
   const dateText = formatMoveDate(moveDate)
@@ -94,8 +118,7 @@ export function buildBookingMessage({ name, phone, email, moveDate, moverCount, 
     ...(contactLines.length ? ['', ...contactLines] : []),
     ...addressLines(addresses),
     '',
-    'Move Details:',
-    details,
+    ...moveDetailsLines({ squareFootageLabel, isApartment, moveDetails }),
   ]
 
   return { subject: title, body: lines.join('\n') }

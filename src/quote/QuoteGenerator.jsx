@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { DEFAULT_MOVERS, MIN_HOURS_PER_MOVER, MIN_MOVERS } from './data/pricing'
+import {
+  DEFAULT_MOVERS,
+  MIN_HOURS_PER_MOVER,
+  MIN_MOVERS,
+  SQ_FT_BANDS,
+  getSqFtBand,
+  hoursPerMoverForSqFtBand,
+} from './data/pricing'
 import { geocodeAddress } from './api/geoapifyClient'
 import AddressInput from './components/AddressInput'
 import { buildBookingMessage } from './buildBookMovePlainText'
@@ -65,7 +72,8 @@ export default function QuoteGenerator() {
   const [honeypot, setHoneypot] = useState('')
   const [moveDate, setMoveDate] = useState('')
   const [moverCount, setMoverCount] = useState(DEFAULT_MOVERS)
-  const [hours, setHours] = useState(MIN_HOURS_PER_MOVER)
+  const [squareFootageBand, setSquareFootageBand] = useState('')
+  const [isApartment, setIsApartment] = useState(false)
   const [destinations, setDestinations] = useState(() => emptyStops())
   const [moveDetails, setMoveDetails] = useState('')
   const [error, setError] = useState('')
@@ -73,6 +81,55 @@ export default function QuoteGenerator() {
 
   const web3formsAccessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY?.trim()
   const wizardStepNumber = WIZARD_STEPS[wizardStep] || 1
+  const estimatedHours = hoursPerMoverForSqFtBand(squareFootageBand)
+
+  const renderSquareFootageSelect = (id) => (
+    <label className="quoteMoveDetailsField" htmlFor={id}>
+      <span className="quoteMoveDetailsFieldLabel">Approx. square footage</span>
+      <select
+        id={id}
+        className="quoteInput quoteMoveDetailsSelect"
+        value={squareFootageBand}
+        onChange={(e) => setSquareFootageBand(e.target.value)}
+        aria-label="Approximate square footage"
+      >
+        <option value="">Select size…</option>
+        {SQ_FT_BANDS.map((band) => (
+          <option key={band.id} value={band.id}>
+            {band.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+
+  const renderMoveDetailsFields = (idPrefix) => (
+    <div className="quoteMoveDetails">
+      <p className="quoteMoveDetailsLabel">Move details</p>
+      <div className="quoteMoveDetailsMeta">
+        <label className="quoteToggleRow quoteMoveDetailsApartment">
+          <input
+            type="checkbox"
+            checked={isApartment}
+            onChange={(e) => setIsApartment(e.target.checked)}
+          />
+          <span>Apartment</span>
+        </label>
+      </div>
+      <label className="quoteMoveDetailsFieldLabel" htmlFor={`${idPrefix}-move-details`}>
+        Additional notes
+      </label>
+      <textarea
+        id={`${idPrefix}-move-details`}
+        className="quoteInput quoteTextarea"
+        placeholder="Stairs, fragile items, timing, access, etc."
+        value={moveDetails}
+        onChange={(e) => setMoveDetails(e.target.value)}
+        rows={4}
+        aria-label="Additional move details"
+      />
+    </div>
+  )
 
   const skipTo = (step) => {
     setError('')
@@ -118,9 +175,7 @@ export default function QuoteGenerator() {
   if (!isValidEmail(email)) missingFields.push('email')
   if (!moveDate) missingFields.push('move date')
   if (!Number.isFinite(Number(moverCount)) || Number(moverCount) < MIN_MOVERS) missingFields.push('movers')
-  if (!Number.isFinite(Number(hours)) || Number(hours) < MIN_HOURS_PER_MOVER) {
-    missingFields.push(`at least ${MIN_HOURS_PER_MOVER} hours`)
-  }
+  if (!squareFootageBand) missingFields.push('square footage')
   if (!destinations.some((stop) => stop.address.trim())) missingFields.push('an address')
   const canBook = missingFields.length === 0
 
@@ -152,13 +207,8 @@ export default function QuoteGenerator() {
 
   const goNextFromMovers = () => {
     const count = Number(moverCount)
-    const bookedHours = Number(hours)
     if (!Number.isFinite(count) || count < MIN_MOVERS) {
       setError('At least one mover is required.')
-      return
-    }
-    if (!Number.isFinite(bookedHours) || bookedHours < MIN_HOURS_PER_MOVER) {
-      setError(`Hours must be at least ${MIN_HOURS_PER_MOVER}.`)
       return
     }
     setError('')
@@ -186,9 +236,11 @@ export default function QuoteGenerator() {
         email,
         moveDate,
         moverCount,
-        hours,
+        hours: hoursPerMoverForSqFtBand(squareFootageBand),
         destinations: resolved,
         moveDetails,
+        squareFootageLabel: getSqFtBand(squareFootageBand)?.label ?? '',
+        isApartment,
       })
       if (!web3formsAccessKey) {
         if (import.meta.env.DEV) {
@@ -327,20 +379,7 @@ export default function QuoteGenerator() {
                 <button type="button" className="quoteBtnSecondary" onClick={addStop}>
                   + Add stop
                 </button>
-                <div className="quoteMoveDetails">
-                  <label className="quoteMoveDetailsLabel" htmlFor="config-move-details">
-                    Move details
-                  </label>
-                  <textarea
-                    id="config-move-details"
-                    className="quoteInput quoteTextarea"
-                    placeholder="Please describe your move"
-                    value={moveDetails}
-                    onChange={(e) => setMoveDetails(e.target.value)}
-                    rows={4}
-                    aria-label="Please describe your move"
-                  />
-                </div>
+                {renderMoveDetailsFields('config')}
               </section>
               <section className="quoteCard quoteMainRight">
                 <h3 className="quoteCardTitle">Contact</h3>
@@ -380,7 +419,8 @@ export default function QuoteGenerator() {
                   Crew
                 </h3>
                 <p className="quoteCardHint">
-                  One mover can be booked. Minimum {MIN_HOURS_PER_MOVER} hours.
+                  One mover can be booked. Hours in your calendar invite are estimated from square footage (
+                  {squareFootageBand ? `${estimatedHours} hrs` : `min ${MIN_HOURS_PER_MOVER} hrs`}).
                 </p>
                 <div className="quoteModalFields">
                   <label className="quoteModalLabel">
@@ -395,18 +435,9 @@ export default function QuoteGenerator() {
                       aria-label="Number of movers"
                     />
                   </label>
-                  <label className="quoteModalLabel">
-                    Hours
-                    <input
-                      type="number"
-                      className="quoteInput quoteWizardNumber"
-                      min={MIN_HOURS_PER_MOVER}
-                      step={1}
-                      value={hours}
-                      onChange={(e) => setHours(e.target.value)}
-                      aria-label="Hours"
-                    />
-                  </label>
+                </div>
+                <div className="quoteMoveDetailsMeta" style={{ marginTop: 16 }}>
+                  {renderSquareFootageSelect('config-crew-sqft')}
                 </div>
               </section>
             </div>
@@ -516,9 +547,10 @@ export default function QuoteGenerator() {
         {wizardStep === 'movers' && (
           <>
             <h3 className="quoteWizardTitle">Crew</h3>
-            <p className="quoteWizardQuestion">How many movers, and for how many hours?</p>
+            <p className="quoteWizardQuestion">How many movers do you need?</p>
             <p className="quoteOptionalHint">
-              Starts at {DEFAULT_MOVERS} movers. One mover can be booked. Minimum {MIN_HOURS_PER_MOVER} hours.
+              Starts at {DEFAULT_MOVERS} movers. One mover can be booked. We estimate booked hours from square
+              footage.
             </p>
             <div className="quoteModalFields">
               <label className="quoteModalLabel">
@@ -533,18 +565,9 @@ export default function QuoteGenerator() {
                   aria-label="Number of movers"
                 />
               </label>
-              <label className="quoteModalLabel">
-                Hours
-                <input
-                  type="number"
-                  className="quoteInput quoteWizardNumber"
-                  min={MIN_HOURS_PER_MOVER}
-                  step={1}
-                  value={hours}
-                  onChange={(e) => setHours(e.target.value)}
-                  aria-label="Hours"
-                />
-              </label>
+            </div>
+            <div className="quoteMoveDetailsMeta" style={{ marginTop: 16 }}>
+              {renderSquareFootageSelect('wizard-crew-sqft')}
             </div>
             {error && <p className="quoteWizardError">{error}</p>}
             <div className="quoteWizardActions">
@@ -596,20 +619,7 @@ export default function QuoteGenerator() {
             <button type="button" className="quoteBtnSecondary" onClick={addStop}>
               + Add stop
             </button>
-            <div className="quoteMoveDetails quoteMoveDetailsWizard">
-              <label className="quoteMoveDetailsLabel" htmlFor="wizard-move-details">
-                Move details
-              </label>
-              <textarea
-                id="wizard-move-details"
-                className="quoteInput quoteTextarea"
-                placeholder="Please describe your move"
-                value={moveDetails}
-                onChange={(e) => setMoveDetails(e.target.value)}
-                rows={4}
-                aria-label="Please describe your move"
-              />
-            </div>
+            <div className="quoteMoveDetailsWizard">{renderMoveDetailsFields('wizard')}</div>
             {error && <p className="quoteWizardError">{error}</p>}
             <div className="quoteWizardActions">
               <button type="button" className="quoteWizardLink quoteWizardBack" onClick={wizardBack}>
