@@ -71,11 +71,9 @@ function formatHours(hours) {
 function moveDetailsLines({ squareFootageLabel, isApartment, moveDetails }) {
   const sqFt = String(squareFootageLabel || '').trim()
   const notes = typeof moveDetails === 'string' ? moveDetails.trim() : ''
-  const lines = [
-    'Move Details:',
-    `Square footage: ${sqFt || 'Not specified'}`,
-    `Apartment: ${isApartment ? 'Yes' : 'No'}`,
-  ]
+  const lines = ['Move Details:']
+  if (sqFt) lines.push(sqFt)
+  if (isApartment) lines.push('Apartment')
   if (notes) {
     lines.push('', notes)
   }
